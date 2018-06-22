@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: okio-1.14.0.jar moshi-1.6.0.jar
+Main-Class: Main
+
