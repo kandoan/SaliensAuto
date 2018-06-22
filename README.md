@@ -29,7 +29,7 @@ If you're familiar with java before, just run it the way you like.
 In case you don't know how:
 
 ## Easiest way
-The zip file included a .bat file. You can straight up open the .bat while to run the program if you extract both file in the zip in the same folder.
+The zip file included a .bat file. You can straight up open the .bat to run the program if you extract both file in the zip in the same folder.
 
 There is a section below if you want to understand what is a .bat file or want to customize it.
 
