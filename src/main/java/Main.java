@@ -16,6 +16,7 @@ public class Main {
     public static Zone currentZone;
     public static int planetSearchMode = 0;
     public static ProcessThread thread;
+    public static boolean pause=true;
     public static void main(String[] args){
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
@@ -59,7 +60,7 @@ public class Main {
 
     private static void setToken(String s) {
         token = s;
-        System.out.println("Token has set to "+token);
+        System.out.println("Token has been set to "+token);
     }
 
     private static void sendHelp() {
@@ -76,14 +77,15 @@ public class Main {
 
     private static void stop() {
         if(thread!=null && !thread.isInterrupted()) {
-            thread.cancel();
+            pause=true;
             thread.interrupt();
         }
-        System.out.println("Automation has been stopped");
+        System.out.println("Stopping...");
     }
 
     public static void start(){
         stop();
+        pause=false;
         System.out.println("Starting with token "+token+" and search mode "+planetSearchMode+"...");
         thread = new ProcessThread();
         thread.start();
@@ -99,7 +101,7 @@ public class Main {
             System.out.println("Attempting to progress in planet " + currentPlanet);
             joinPlanet();
         }
-        while(true) {
+        while(!pause) {
             currentZone = getAvailableZone();
             if (currentZone == null) {
                 System.out.println("No zone found");
@@ -293,17 +295,16 @@ public class Main {
     }
 
     private static class ProcessThread extends Thread {
-        boolean cancelled=false;
         @Override
         public void run() {
-            while(!cancelled) {
-                leaveCurrentGame();
-                leaveCurrentPlanet();
-                progress();
+            while(!pause) {
+                try {
+                    leaveCurrentGame();
+                    leaveCurrentPlanet();
+                    progress();
+                }catch (Exception e){}
             }
-        }
-        public void cancel(){
-            cancelled=true;
+            System.out.println("Automation stopped");
         }
     }
 }
