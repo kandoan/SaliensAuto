@@ -1,6 +1,8 @@
 # SaliensAuto
 Automate Steam's Saliens
+
 First, when you keep reading, there might be some broken English because I'm not a native English speaker. I'm sorry.
+
 I'm still new to Java and programming in general because I'm a new college student with almost no experience and mostly learned things by myself. I made this project just to practice and also contribute to the community if possible. Because of that, this project might be not as good compare to those already out there.
 
 To those who use this, there might be some errors here and there. Please report to me so that I can fix it if possible.
@@ -11,6 +13,7 @@ Also this project is inspired alot from [SalienCheat](https://github.com/SteamDa
 
 # Download
 Go here: https://github.com/KickVN/SaliensAuto/releases
+
 Grab the first SaliensAuto.jar in sight.
 
 # Prerequisite
