@@ -14,7 +14,7 @@ Also this project is inspired alot from [SalienCheat](https://github.com/SteamDa
 # Download
 Go here: https://github.com/KickVN/SaliensAuto/releases
 
-Grab the first SaliensAuto.jar in sight.
+Grab the first SaliensAuto.zip in sight.
 
 # Prerequisite
 Since this is a Java program so obviously you need Java to be able to run it.
@@ -22,11 +22,16 @@ Since this is a Java program so obviously you need Java to be able to run it.
 [Download here](https://java.com/en/download/) and then install it.
 
 # How to run this program on windows
-Make sure you have already installed Java.
+Make sure you have already installed Java. Then you have to download from the link above and extract the zip file to somewhere you'd like.
 
 If you're familiar with java before, just run it the way you like.
 
 In case you don't know how:
+
+## Easiest way
+The zip file included a .bat file. You can straight up open the .bat while to run the program if you extract both file in the zip in the same folder.
+
+There is a section below if you want to understand what is a .bat file or want to customize it.
 
 ## Use cmd.exe
 Open cmd.exe and run a command with this structure:
