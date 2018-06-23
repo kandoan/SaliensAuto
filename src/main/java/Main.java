@@ -29,10 +29,8 @@ public class Main {
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
         if(args.length>=3) start();
 
-//        Ansi.ansi().eras
         System.out.println(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
-                +" regularly in case there is a new version"+Color.RESET);
-//        System.out.println("Please keep checking https://github.com/KickVN/SaliensAuto in case there is a new version");
+                +" regularly in case there is a new update"+Color.RESET);
         sendHelp();
         Scanner scanner = new Scanner(System.in);
         while(true){
@@ -123,7 +121,6 @@ public class Main {
             currentZone = getAvailableZone();
             if (currentZone == null) {
                 System.out.println(highlight("No zone found",Color.RED_BRIGHT));
-//                currentPlanet = getAvailablePlanet();
                 return;
             }
             if (!joinZone()) {
@@ -167,7 +164,10 @@ public class Main {
                 ReportScore response = res.response;
                 if(response==null || response.new_score==null) return false;
                 System.out.println(highlight("Completed an instance. You have reached level "+highlight(response.new_level+"")
-                        +" ("+highlight(response.new_score)+"/"+highlight(response.next_level_score)+")",Color.CYAN_BRIGHT));
+                        +" ("+highlight(response.new_score)+"/"+highlight(response.next_level_score)+" ~ "
+                        +highlight(ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"")+"%)",Color.CYAN_BRIGHT));
+                int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
+                System.out.println(highlight("At this rate, to reach next level, you need to wait at least ",Color.CYAN_BRIGHT)+highlight(ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty))));
                 return true;
             }
         } catch (IOException e) {
@@ -177,13 +177,17 @@ public class Main {
     }
 
     private static int getZoneScore() {
-        int score=0;
-        switch (currentZone.difficulty){
-            case 1: score=5; break;
-            case 2: score=10; break;
-            case 3: score=20; break;
-        }
+        int score=getPointPerSec(currentZone.difficulty);
         return score*120;
+    }
+
+    private static int getPointPerSec(int difficulty) {
+        switch (currentZone.difficulty){
+            case 1: return 5;
+            case 2: return 10;
+            case 3: return 20;
+        }
+        return 0;
     }
 
     private static boolean joinZone() {

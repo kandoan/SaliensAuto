@@ -11,7 +11,7 @@ public class Planet{
         int maxDiff = Integer.MIN_VALUE;
         Zone res = null;
         for(Zone zone:zones){
-            if(zone.captured || zone.capture_progress>=0.95) continue;
+            if(zone.captured || zone.capture_progress>=0.98) continue;
             if(maxDiff<zone.difficulty){
                 maxDiff=zone.difficulty;
                 res = zone;
@@ -23,7 +23,7 @@ public class Planet{
     public int[] getDifficulties() {
         int[] result = new int[4];
         for(Zone zone:zones){
-            if(zone.captured) continue;
+            if(zone.captured || zone.capture_progress>=0.98) continue;
             result[zone.difficulty]++;
         }
         return result;
