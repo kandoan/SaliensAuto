@@ -1,4 +1,4 @@
-
+package com.gmail.vkhanh234.SaliensAuto;
 
 //Copied from stackoverflow again
 public class Color {

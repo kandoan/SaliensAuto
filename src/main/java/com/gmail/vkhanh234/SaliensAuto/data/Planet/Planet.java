@@ -1,4 +1,4 @@
-package data.Planet;
+package com.gmail.vkhanh234.SaliensAuto.data.Planet;
 
 import java.util.List;
 

@@ -101,3 +101,5 @@ Your token is the nonsense path in between two quotes. Here is *10a654252939d458
 
 # Can I automate multiple accounts with different tokens at the same time with this?
 You absolutely can. Just open the program multiple times and make sure to set the token different each time (either by *settoken* command or *\[args]*) then *start* as usual.
+
+Please keep in mind that you still can't open multiple instances for the same account to boost your progress speed. This is only available for botting multiple accounts with different tokens at the same time.

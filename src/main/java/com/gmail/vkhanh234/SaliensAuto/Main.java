@@ -1,13 +1,13 @@
+package com.gmail.vkhanh234.SaliensAuto;
+
+import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfo;
+import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
+import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
+import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
+import com.gmail.vkhanh234.SaliensAuto.data.Planet.*;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import data.Planet.*;
-import data.PlayerInfo.PlayerInfo;
-import data.PlayerInfo.PlayerInfoResponse;
-import data.ReportScore.ReportScore;
-import data.ReportScore.ReportScoreResponse;
-import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
-import org.fusesource.jansi.AnsiString;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -25,12 +25,14 @@ public class Main {
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
+        System.out.println(Color.PURPLE_BRIGHT+"SaliensAuto v"+ Main.class.getPackage().getImplementationVersion());
+        System.out.println(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
+                +" regularly in case there is a new update"+Color.RESET);
+
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
         if(args.length>=3) start();
 
-        System.out.println(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
-                +" regularly in case there is a new update"+Color.RESET);
         sendHelp();
         Scanner scanner = new Scanner(System.in);
         while(true){
@@ -76,7 +78,7 @@ public class Main {
         System.out.println(
                 highlight("Commands List: \n",Color.CYAN_BRIGHT)
                 +"\t "+highlight("settoken <token>")+" - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get your token\n"
-                +"\t "+highlight("setsearchmode 0")+" - (Default mode) Choose planet with the highest captured rate to have a chance winning games\n"
+                +"\t "+highlight("setsearchmode 0")+" - (Default mode) Choose planet with the highest captured rate to have a chance of winning games and finish off planets to let new one bloom\n"
                 +"\t "+highlight("setsearchmode 1")+" - Choose planet with the highest difficulties to get more XP\n"
                 +"\t "+highlight("start")+" - Start automating\n"
                 +"\t "+highlight("stop")+" - Stop automating\n"
@@ -325,6 +327,14 @@ public class Main {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void changeClan(String id){
+        PlayerInfo info = getPlayerInfo();
+        if(info.clan_info==null || !String.valueOf(info.clan_info.accountid).equalsIgnoreCase(id)){
+
+        }
+//        if(info.)
     }
 
     private static class ProcessThread extends Thread {
