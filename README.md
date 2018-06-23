@@ -3,14 +3,6 @@ Automate Steam's Saliens
 
 First, when you keep reading, there might be some broken English because I'm not a native English speaker. I'm sorry.
 
-I'm still new to Java and programming in general because I'm a new college student with almost no experience and mostly learned things by myself. I made this project just to practice and also contribute to the community if possible. Because of that, this project might be not as good compare to those already out there.
-
-To those who use this, there might be some errors here and there. Please report to me so that I can fix it if possible.
-
-To those who want to edit/contribute to this, because of my lack of experience, I expect the code to be really terrible to read. And I don't use github much either. So please forgive me.
-
-Also this project is inspired alot from [SalienCheat](https://github.com/SteamDatabase/SalienCheat). Big thanks.
-
 # Features
 * No web browser needed. Since this is a **Java** program, **not JavaSCRIPT**. It'll run as a standalone program which cost less resource than javascript's version. Because no browser means no images, assests, sounds... need to be loaded.
 * Easier to install. I think? At least I'm sure it's easier than the PHP's one. You just have to install Java which is pretty common nowaday so some of you may have already installed it anyway (especially those minecraft players). With java installed, you can easily open this program by just opening a file I included in the download.
@@ -103,3 +95,5 @@ Your token is the nonsense path in between two quotes. Here is *10a654252939d458
 You absolutely can. Just open the program multiple times and make sure to set the token different each time (either by *settoken* command or *\[args]*) then *start* as usual.
 
 Please keep in mind that you still can't open multiple instances for the same account to boost your progress speed. This is only available for botting multiple accounts with different tokens at the same time.
+# Acknowledgments
+This project is inspired from [SalienCheat](https://github.com/SteamDatabase/SalienCheat). Big thank.
