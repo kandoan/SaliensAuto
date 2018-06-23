@@ -6,7 +6,7 @@
 
     <groupId>com.gmail.vkhanh234</groupId>
     <artifactId>SaliensAuto</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <build>
         <plugins>
             <plugin>

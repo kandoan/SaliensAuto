@@ -135,9 +135,9 @@ public class Main {
                 return;
             }
             try {
-                System.out.println("Wait 120s");
+                System.out.println("Wait 110s");
                 checkVersion();
-                Thread.sleep(61000);
+                Thread.sleep(50000);
                 System.out.println("Wait 60s");
                 Thread.sleep(30000);
                 System.out.println("Wait 30s");
