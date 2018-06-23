@@ -107,7 +107,7 @@ public class Main {
             currentZone = getAvailableZone();
             if (currentZone == null) {
                 System.out.println("No zone found");
-                currentPlanet = getAvailablePlanet();
+//                currentPlanet = getAvailablePlanet();
                 return;
             }
             if (!joinZone()) {
@@ -269,9 +269,11 @@ public class Main {
         Planet planet = getPlanetData(currentPlanet);
         if(planet==null) return null;
         Zone zone = planet.getAvailableZone();
-        if(planetSearchMode==1 && zone.difficulty<3 && !noHighDiff)
-            return null;
-        else return zone;
+        if(planetSearchMode==1 && zone.difficulty<3 && !noHighDiff) return null;
+        else {
+            noHighDiff=false;
+            return zone;
+        }
     }
 
     public static Planet getPlanetData(String id){
