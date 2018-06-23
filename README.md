@@ -1,6 +1,8 @@
 # SaliensAuto
 Automate Steam's Saliens
+
 First, when you keep reading, there might be some broken English because I'm not a native English speaker. I'm sorry.
+
 I'm still new to Java and programming in general because I'm a new college student with almost no experience and mostly learned things by myself. I made this project just to practice and also contribute to the community if possible. Because of that, this project might be not as good compare to those already out there.
 
 To those who use this, there might be some errors here and there. Please report to me so that I can fix it if possible.
@@ -9,9 +11,18 @@ To those who want to edit/contribute to this, because of my lack of experience, 
 
 Also this project is inspired alot from [SalienCheat](https://github.com/SteamDatabase/SalienCheat). Big thanks.
 
+# Features
+* No web browser needed. Since this is a **Java** program, **not JavaSCRIPT**. It'll run as a standalone program which cost less resource than javascript's version. Because no browser means no images, assests, sounds... need to be loaded.
+* Easier to install. I think? At least I'm sure it's easier than the PHP's one. You just have to install Java which is pretty common nowaday so some of you may have already installed it anyway (especially those minecraft players). With java installed, you can easily open this program by just opening a file I included in the download.
+* Pretty much has the same features as other's automation. **Auto join zone/planet, auto repeat, auto kill, invincibility, always max points,...**
+* 2 mode to search for zone/planet. 
+** First mode is to search for planet with the most captured rate so you can hop in and spend as much time in those planets to have more chance winning the games before the plannet closed
+** Second mode is to aggressive search for planet with the most XP return (most higher difficulty zone). With this, you'll level up quicker since it'll always automatically join a planet/zone with highest difficulty possible (hard difficulty).
+
 # Download
 Go here: https://github.com/KickVN/SaliensAuto/releases
-Grab the first SaliensAuto.jar in sight.
+
+Grab the first SaliensAuto.zip in sight.
 
 # Prerequisite
 Since this is a Java program so obviously you need Java to be able to run it.
@@ -19,11 +30,16 @@ Since this is a Java program so obviously you need Java to be able to run it.
 [Download here](https://java.com/en/download/) and then install it.
 
 # How to run this program on windows
-Make sure you have already installed Java.
+Make sure you have already installed Java. Then you have to download from the link above and extract the zip file to somewhere you'd like.
 
 If you're familiar with java before, just run it the way you like.
 
 In case you don't know how:
+
+## Easiest way
+The zip file included a .bat file. You can straight up open the .bat to run the program if you extract both file in the zip in the same folder.
+
+There is a section below if you want to understand what is a .bat file or want to customize it.
 
 ## Use cmd.exe
 Open cmd.exe and run a command with this structure:
