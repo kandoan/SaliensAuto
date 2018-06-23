@@ -5,6 +5,9 @@ import data.PlayerInfo.PlayerInfo;
 import data.PlayerInfo.PlayerInfoResponse;
 import data.ReportScore.ReportScore;
 import data.ReportScore.ReportScoreResponse;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.AnsiString;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -20,10 +23,16 @@ public class Main {
 
     public static boolean noHighDiff=true;
     public static void main(String[] args){
+        AnsiConsole.systemInstall();
+
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
         if(args.length>=3) start();
 
+//        Ansi.ansi().eras
+        System.out.println(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
+                +" regularly in case there is a new version"+Color.RESET);
+//        System.out.println("Please keep checking https://github.com/KickVN/SaliensAuto in case there is a new version");
         sendHelp();
         Scanner scanner = new Scanner(System.in);
         while(true){
@@ -57,23 +66,23 @@ public class Main {
 
     public static void setPlanetSearchMode(int v) {
         planetSearchMode = v;
-        System.out.println("Planet Search Mode has been set to "+planetSearchMode);
+        System.out.println(highlight("Planet Search Mode")+" has been set to "+highlight(planetSearchMode+""));
     }
 
     private static void setToken(String s) {
         token = s;
-        System.out.println("Token has been set to "+token);
+        System.out.println(highlight("Token")+" has been set to "+highlight(token));
     }
 
     private static void sendHelp() {
         System.out.println(
-                "Commands List: \n"
-                +"\t settoken <token> - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get your token\n"
-                +"\t setsearchmode 0 - (Default mode) Choose planet with the highest captured rate to have a chance winning games\n"
-                +"\t setsearchmode 1 - Choose planet with the highest difficulties to get more XP\n"
-                +"\t start - Start automating\n"
-                +"\t stop - Stop automating\n"
-                +"\t exit - What can this do? Idk. Figure it out by yourself."
+                highlight("Commands List: \n",Color.CYAN_BRIGHT)
+                +"\t "+highlight("settoken <token>")+" - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get your token\n"
+                +"\t "+highlight("setsearchmode 0")+" - (Default mode) Choose planet with the highest captured rate to have a chance winning games\n"
+                +"\t "+highlight("setsearchmode 1")+" - Choose planet with the highest difficulties to get more XP\n"
+                +"\t "+highlight("start")+" - Start automating\n"
+                +"\t "+highlight("stop")+" - Stop automating\n"
+                +"\t "+highlight("exit")+" - What can this do? Idk. Figure it out by yourself."
         );
     }
 
@@ -82,36 +91,43 @@ public class Main {
             pause=true;
             thread.interrupt();
         }
-        System.out.println("Stopping...");
+        System.out.println(highlight("Stopping...",Color.RED_BRIGHT));
     }
 
     public static void start(){
         stop();
         pause=false;
-        System.out.println("Starting with token "+token+" and search mode "+planetSearchMode+"...");
+        System.out.println("Starting with token "+highlight(token)+" and search mode "+highlight(planetSearchMode+"")+"...");
         thread = new ProcessThread();
         thread.start();
 
     }
 
+    private static String highlight(String s) {
+        return highlight(s,Color.YELLOW_BRIGHT);
+    }
+    private static String highlight(String s,String color) {
+        return color+s+Color.RESET;
+    }
+
     private static void progress() {
         if(currentPlanet==null) {
-            System.out.println("No planet found");
+            System.out.println(highlight("No planet found",Color.RED_BRIGHT));
             return;
         }
         else {
-            System.out.println("Attempting to progress in planet " + currentPlanet);
+            System.out.println("Attempting to progress in planet " + highlight(currentPlanet));
             joinPlanet();
         }
         while(!pause) {
             currentZone = getAvailableZone();
             if (currentZone == null) {
-                System.out.println("No zone found");
+                System.out.println(highlight("No zone found",Color.RED_BRIGHT));
 //                currentPlanet = getAvailablePlanet();
                 return;
             }
             if (!joinZone()) {
-                System.out.println("Failed joining zone " + currentZone.zone_position);
+                System.out.println(highlight("Failed joining zone " + highlight(currentZone.zone_position+""),Color.RED_BRIGHT));
                 return;
             }
             try {
@@ -128,10 +144,10 @@ public class Main {
                 System.out.println("Wait 5s");
                 Thread.sleep(5000);
                 if(!reportScore()){
-                    System.out.println("Failed completing the instance");
+                    System.out.println(highlight("Failed completing the instance",Color.RED_BRIGHT));
                 }
                 leaveCurrentGame();
-                System.out.println("===================================");
+                System.out.println(highlight("===================================",Color.GREEN_BRIGHT));
             } catch (InterruptedException e) {
                 return;
             }
@@ -140,7 +156,8 @@ public class Main {
 
     private static boolean reportScore(){
         int score = getZoneScore();
-        System.out.println("Attempting to complete an instance with a score of "+score+" in zone "+currentZone.zone_position+"(difficulty "+currentZone.difficulty+")");
+        System.out.println("Attempting to complete an instance with a score of "+highlight(score+"")
+                +" in zone "+highlight(currentZone.zone_position+"")+"(difficulty "+highlight(currentZone.difficulty+"")+")");
         String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportScoreResponse> jsonAdapter = moshi.adapter(ReportScoreResponse.class);
@@ -149,7 +166,8 @@ public class Main {
             if(res!=null && res.response!=null){
                 ReportScore response = res.response;
                 if(response==null || response.new_score==null) return false;
-                System.out.println("Completed an instance. You have reached level "+response.new_level+" ("+response.new_score+"/"+response.next_level_score+")");
+                System.out.println(highlight("Completed an instance. You have reached level "+highlight(response.new_level+"")
+                        +" ("+highlight(response.new_score)+"/"+highlight(response.next_level_score)+")",Color.CYAN_BRIGHT));
                 return true;
             }
         } catch (IOException e) {
@@ -169,7 +187,7 @@ public class Main {
     }
 
     private static boolean joinZone() {
-        System.out.println("Attempting to join zone "+currentZone.zone_position);
+        System.out.println("Attempting to join zone "+highlight(currentZone.zone_position+"")+" (difficulty "+highlight(currentZone.difficulty+"")+")");
         String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
@@ -192,7 +210,7 @@ public class Main {
         PlayerInfo info = getPlayerInfo();
         if(info.active_zone_game!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_zone_game);
-            System.out.println("Left game "+info.active_zone_game);
+            System.out.println(highlight("Left game "+highlight(info.active_zone_game),Color.CYAN_BRIGHT));
         }
         if(info.active_planet!=null) currentPlanet = info.active_planet;
     }
@@ -201,7 +219,7 @@ public class Main {
         PlayerInfo info = getPlayerInfo();
         if(info.active_planet!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
-            System.out.println("Left planet "+info.active_planet);
+            System.out.println(highlight("Left planet "+highlight(info.active_planet),Color.CYAN_BRIGHT));
         }
         currentPlanet = getAvailablePlanet();
     }
@@ -222,7 +240,7 @@ public class Main {
 
     public static String getAvailablePlanet()
     {
-        System.out.println("Searching for planet...");
+        System.out.println(highlight("Searching for planet...",Color.CYAN_BRIGHT));
         Planets planets = getPlanets();
         if(planets==null) return null;
         if(planetSearchMode==0) return getTopPriorityPlanet(planets);
@@ -233,13 +251,13 @@ public class Main {
         String id="1";
         for(Planet planet:planets.planets){
             if(planet.state==null || !planet.state.active || planet.state.captured) continue;
-            System.out.println("- Planet "+planet.id+"("+planet.state.name+")'s priority is "+planet.state.priority);
+            System.out.println("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+")'s priority is "+highlight(planet.state.priority+""));
             if(min>planet.state.priority){
                 min = planet.state.priority;
                 id=planet.id;
             }
         }
-        System.out.println("=> Choose planet "+id);
+        System.out.println(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
         return id;
     }
 
@@ -250,7 +268,8 @@ public class Main {
         for(Planet planet:planets.planets){
             Planet planetData = getPlanetData(planet.id);
             int[] difficuties = planetData.getDifficulties();
-            System.out.println("- Planet "+planet.id+"("+planet.state.name+") has "+difficuties[1]+" low, "+difficuties[2]+" medium and "+difficuties[3]+" high");
+            System.out.println("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+") has "+highlight(difficuties[1]+"",Color.GREEN_BRIGHT)
+                    +" low, "+highlight(difficuties[2]+"",Color.CYAN_BRIGHT)+" medium and "+highlight(difficuties[3]+"",Color.RED_BRIGHT)+" high");
             if(difficuties[3]>0) noHighDiff=false;
             for(int i=3;i>=1;i--){
                 if(max[i]<difficuties[i]){
@@ -261,7 +280,7 @@ public class Main {
                 else if(max[i]>difficuties[i]) break;
             }
         }
-        System.out.println("=> Choose planet "+id);
+        System.out.println(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
         return id;
     }
 
@@ -314,7 +333,7 @@ public class Main {
                     progress();
                 }catch (Exception e){}
             }
-            System.out.println("Automation stopped");
+            System.out.println(highlight("Automation stopped",Color.RED_BRIGHT));
         }
     }
 }

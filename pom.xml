@@ -6,7 +6,7 @@
 
     <groupId>com.gmail.vkhanh234</groupId>
     <artifactId>SaliensAuto</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>
@@ -25,6 +25,11 @@
             <groupId>com.squareup.moshi</groupId>
             <artifactId>moshi</artifactId>
             <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.17.1</version>
         </dependency>
     </dependencies>
 
