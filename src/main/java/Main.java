@@ -17,6 +17,8 @@ public class Main {
     public static int planetSearchMode = 0;
     public static ProcessThread thread;
     public static boolean pause=true;
+
+    public static boolean noHighDiff=true;
     public static void main(String[] args){
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
@@ -242,18 +244,21 @@ public class Main {
     }
 
     public static String getMostXpPlanet(Planets planets){
+        noHighDiff=true;
         int[] max = new int[4];
         String id = "1";
         for(Planet planet:planets.planets){
             Planet planetData = getPlanetData(planet.id);
             int[] difficuties = planetData.getDifficulties();
             System.out.println("- Planet "+planet.id+"("+planet.state.name+") has "+difficuties[1]+" low, "+difficuties[2]+" medium and "+difficuties[3]+" high");
+            if(difficuties[3]>0) noHighDiff=false;
             for(int i=3;i>=1;i--){
                 if(max[i]<difficuties[i]){
                     max=difficuties;
                     id=planet.id;
                     break;
                 }
+                else if(max[i]>difficuties[i]) break;
             }
         }
         System.out.println("=> Choose planet "+id);
@@ -263,7 +268,10 @@ public class Main {
     public static Zone getAvailableZone(){
         Planet planet = getPlanetData(currentPlanet);
         if(planet==null) return null;
-        return planet.getAvailableZone();
+        Zone zone = planet.getAvailableZone();
+        if(planetSearchMode==1 && zone.difficulty<3 && !noHighDiff)
+            return null;
+        else return zone;
     }
 
     public static Planet getPlanetData(String id){
