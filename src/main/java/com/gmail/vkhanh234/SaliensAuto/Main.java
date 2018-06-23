@@ -18,16 +18,21 @@ public class Main {
     public static String currentPlanet;
     public static Zone currentZone;
     public static int planetSearchMode = 0;
-    public static ProcessThread thread;
-    public static boolean pause=true;
 
+    public static CheckVersionThread versionThread;
+    public static ProcessThread thread;
+
+    public static boolean pause=true;
     public static boolean noHighDiff=true;
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
-        System.out.println(Color.PURPLE_BRIGHT+"SaliensAuto v"+ Main.class.getPackage().getImplementationVersion());
+        checkVersion();
+
+        System.out.println(Color.PURPLE_BRIGHT+"SaliensAuto "+ VersionUtils.getLocalVersion());
         System.out.println(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
                 +" regularly in case there is a new update"+Color.RESET);
+
 
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
@@ -131,6 +136,7 @@ public class Main {
             }
             try {
                 System.out.println("Wait 120s");
+                checkVersion();
                 Thread.sleep(61000);
                 System.out.println("Wait 60s");
                 Thread.sleep(30000);
@@ -337,6 +343,23 @@ public class Main {
 //        if(info.)
     }
 
+    public static void compareVersion(){
+        String remoteVer = VersionUtils.getRemoteVersion();
+        String localVer = VersionUtils.getLocalVersion();
+        if(remoteVer.equalsIgnoreCase(localVer)) return;
+        System.out.println(highlight("=================================",Color.RED_BRIGHT));
+        System.out.println(highlight("There is a new version available: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+remoteVer));
+        System.out.println(highlight("Your current version: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+localVer));
+        System.out.println(highlight("Go here and download latest version: ",Color.GREEN_BRIGHT)+highlight("https://github.com/KickVN/SaliensAuto/releases",Color.CYAN_BRIGHT));
+        System.out.println(highlight("=================================",Color.RED_BRIGHT));
+    }
+
+    public static void checkVersion(){
+        if(versionThread!=null && !versionThread.isInterrupted()) versionThread.interrupt();
+        versionThread = new CheckVersionThread();
+        versionThread.start();
+    }
+
     private static class ProcessThread extends Thread {
         @Override
         public void run() {
@@ -348,6 +371,12 @@ public class Main {
                 }catch (Exception e){}
             }
             System.out.println(highlight("Automation stopped",Color.RED_BRIGHT));
+        }
+    }
+    private static class CheckVersionThread extends Thread {
+        @Override
+        public void run() {
+            compareVersion();
         }
     }
 }

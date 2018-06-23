@@ -72,6 +72,31 @@ public class RequestUtils {
         }
     }
 
+    public static String githubApi(String text) {
+        try {
+            trustAllHosts();
+            URL url = new URL("https://api.github.com/repos/KickVN/SaliensAuto/"+text);
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
+            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
+            conn.setUseCaches(false);
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF8"));
+            if (conn.getResponseCode() != 200) return null;
+            StringBuilder result = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                result.append(line);
+            }
+            return result.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //Copied from stackoverflow lol
     public static void trustAllHosts()
     {
