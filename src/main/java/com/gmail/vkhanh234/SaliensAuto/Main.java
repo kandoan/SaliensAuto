@@ -10,6 +10,8 @@ import com.squareup.moshi.Moshi;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 
@@ -24,13 +26,15 @@ public class Main {
 
     public static boolean pause=true;
     public static boolean noHighDiff=true;
+
+    public static int vcCounter=5;
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
         checkVersion();
 
-        System.out.println(Color.PURPLE_BRIGHT+"SaliensAuto "+ VersionUtils.getLocalVersion());
-        System.out.println(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
+        debug(highlight("SaliensAuto "+ VersionUtils.getLocalVersion(),Color.PURPLE_BRIGHT));
+        debug(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
                 +" regularly in case there is a new update"+Color.RESET);
 
 
@@ -71,16 +75,16 @@ public class Main {
 
     public static void setPlanetSearchMode(int v) {
         planetSearchMode = v;
-        System.out.println(highlight("Planet Search Mode")+" has been set to "+highlight(planetSearchMode+""));
+        debug(highlight("Planet Search Mode")+" has been set to "+highlight(planetSearchMode+""));
     }
 
     private static void setToken(String s) {
         token = s;
-        System.out.println(highlight("Token")+" has been set to "+highlight(token));
+        debug(highlight("Token")+" has been set to "+highlight(token));
     }
 
     private static void sendHelp() {
-        System.out.println(
+        debug(
                 highlight("Commands List: \n",Color.CYAN_BRIGHT)
                 +"\t "+highlight("settoken <token>")+" - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get your token\n"
                 +"\t "+highlight("setsearchmode 0")+" - (Default mode) Choose planet with the highest captured rate to have a chance of winning games and finish off planets to let new one bloom\n"
@@ -96,13 +100,13 @@ public class Main {
             pause=true;
             thread.interrupt();
         }
-        System.out.println(highlight("Stopping...",Color.RED_BRIGHT));
+        debug(highlight("Stopping...",Color.RED_BRIGHT));
     }
 
     public static void start(){
         stop();
         pause=false;
-        System.out.println("Starting with token "+highlight(token)+" and search mode "+highlight(planetSearchMode+"")+"...");
+        debug("Starting with token "+highlight(token)+" and search mode "+highlight(planetSearchMode+"")+"...");
         thread = new ProcessThread();
         thread.start();
 
@@ -117,42 +121,42 @@ public class Main {
 
     private static void progress() {
         if(currentPlanet==null) {
-            System.out.println(highlight("No planet found",Color.RED_BRIGHT));
+            debug(highlight("No planet found",Color.RED_BRIGHT));
             return;
         }
         else {
-            System.out.println("Attempting to progress in planet " + highlight(currentPlanet));
+            debug("Attempting to progress in planet " + highlight(currentPlanet));
             joinPlanet();
         }
         while(!pause) {
             currentZone = getAvailableZone();
             if (currentZone == null) {
-                System.out.println(highlight("No zone found",Color.RED_BRIGHT));
+                debug(highlight("No zone found",Color.RED_BRIGHT));
                 return;
             }
             if (!joinZone()) {
-                System.out.println(highlight("Failed joining zone " + highlight(currentZone.zone_position+""),Color.RED_BRIGHT));
+                debug(highlight("Failed joining zone " + highlight(currentZone.zone_position+""),Color.RED_BRIGHT));
                 return;
             }
             try {
-                System.out.println("Wait 110s");
+                debug("Wait 110s");
                 checkVersion();
                 Thread.sleep(50000);
-                System.out.println("Wait 60s");
+                debug("Wait 60s");
                 Thread.sleep(30000);
-                System.out.println("Wait 30s");
+                debug("Wait 30s");
                 Thread.sleep(15000);
-                System.out.println("Wait 15s");
+                debug("Wait 15s");
                 Thread.sleep(5000);
-                System.out.println("Wait 10s");
+                debug("Wait 10s");
                 Thread.sleep(5000);
-                System.out.println("Wait 5s");
+                debug("Wait 5s");
                 Thread.sleep(5000);
                 if(!reportScore()){
-                    System.out.println(highlight("Failed completing the instance",Color.RED_BRIGHT));
+                    debug(highlight("Failed completing the instance",Color.RED_BRIGHT));
                 }
                 leaveCurrentGame();
-                System.out.println(highlight("===================================",Color.GREEN_BRIGHT));
+                debug(highlight("===================================",Color.GREEN_BRIGHT));
             } catch (InterruptedException e) {
                 return;
             }
@@ -161,7 +165,7 @@ public class Main {
 
     private static boolean reportScore(){
         int score = getZoneScore();
-        System.out.println("Attempting to complete an instance with a score of "+highlight(score+"")
+        debug("Attempting to complete an instance with a score of "+highlight(score+"")
                 +" in zone "+highlight(currentZone.zone_position+"")+"(difficulty "+highlight(currentZone.difficulty+"")+")");
         String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
         Moshi moshi = new Moshi.Builder().build();
@@ -171,11 +175,11 @@ public class Main {
             if(res!=null && res.response!=null){
                 ReportScore response = res.response;
                 if(response==null || response.new_score==null) return false;
-                System.out.println(highlight("Completed an instance. You have reached level "+highlight(response.new_level+"")
+                debug(highlight("Completed an instance. You have reached level "+highlight(response.new_level+"")
                         +" ("+highlight(response.new_score)+"/"+highlight(response.next_level_score)+" ~ "
                         +highlight(ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"")+"%)",Color.CYAN_BRIGHT));
                 int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
-                System.out.println(highlight("At this rate, to reach next level, you need to wait at least ",Color.CYAN_BRIGHT)+highlight(ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty))));
+                debug(highlight("At this rate, to reach next level, you need to wait at least ",Color.CYAN_BRIGHT)+highlight(ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty))));
                 return true;
             }
         } catch (IOException e) {
@@ -199,7 +203,7 @@ public class Main {
     }
 
     private static boolean joinZone() {
-        System.out.println("Attempting to join zone "+highlight(currentZone.zone_position+"")+" (difficulty "+highlight(currentZone.difficulty+"")+")");
+        debug("Attempting to join zone "+highlight(currentZone.zone_position+"")+" (difficulty "+highlight(currentZone.difficulty+"")+")");
         String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
@@ -222,7 +226,7 @@ public class Main {
         PlayerInfo info = getPlayerInfo();
         if(info.active_zone_game!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_zone_game);
-            System.out.println(highlight("Left game "+highlight(info.active_zone_game),Color.CYAN_BRIGHT));
+            debug(highlight("Left game "+highlight(info.active_zone_game),Color.CYAN_BRIGHT));
         }
         if(info.active_planet!=null) currentPlanet = info.active_planet;
     }
@@ -231,7 +235,7 @@ public class Main {
         PlayerInfo info = getPlayerInfo();
         if(info.active_planet!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
-            System.out.println(highlight("Left planet "+highlight(info.active_planet),Color.CYAN_BRIGHT));
+            debug(highlight("Left planet "+highlight(info.active_planet),Color.CYAN_BRIGHT));
         }
         currentPlanet = getAvailablePlanet();
     }
@@ -252,7 +256,7 @@ public class Main {
 
     public static String getAvailablePlanet()
     {
-        System.out.println(highlight("Searching for planet...",Color.CYAN_BRIGHT));
+        debug(highlight("Searching for planet...",Color.CYAN_BRIGHT));
         Planets planets = getPlanets();
         if(planets==null) return null;
         if(planetSearchMode==0) return getTopPriorityPlanet(planets);
@@ -263,13 +267,13 @@ public class Main {
         String id="1";
         for(Planet planet:planets.planets){
             if(planet.state==null || !planet.state.active || planet.state.captured) continue;
-            System.out.println("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+")'s priority is "+highlight(planet.state.priority+""));
+            debug("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+")'s priority is "+highlight(planet.state.priority+""));
             if(min>planet.state.priority){
                 min = planet.state.priority;
                 id=planet.id;
             }
         }
-        System.out.println(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
+        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
         return id;
     }
 
@@ -280,7 +284,7 @@ public class Main {
         for(Planet planet:planets.planets){
             Planet planetData = getPlanetData(planet.id);
             int[] difficuties = planetData.getDifficulties();
-            System.out.println("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+") has "+highlight(difficuties[1]+"",Color.GREEN_BRIGHT)
+            debug("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+") has "+highlight(difficuties[1]+"",Color.GREEN_BRIGHT)
                     +" low, "+highlight(difficuties[2]+"",Color.CYAN_BRIGHT)+" medium and "+highlight(difficuties[3]+"",Color.RED_BRIGHT)+" high");
             if(difficuties[3]>0) noHighDiff=false;
             for(int i=3;i>=1;i--){
@@ -292,7 +296,7 @@ public class Main {
                 else if(max[i]>difficuties[i]) break;
             }
         }
-        System.out.println(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
+        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
         return id;
     }
 
@@ -335,29 +339,39 @@ public class Main {
         return null;
     }
 
-    public static void changeClan(String id){
-        PlayerInfo info = getPlayerInfo();
-        if(info.clan_info==null || !String.valueOf(info.clan_info.accountid).equalsIgnoreCase(id)){
-
-        }
-//        if(info.)
-    }
+//    public static void changeClan(String id){
+//        PlayerInfo info = getPlayerInfo();
+//        if(info.clan_info==null || !String.valueOf(info.clan_info.accountid).equalsIgnoreCase(id)){
+//
+//        }
+//    }
 
     public static void compareVersion(){
         String remoteVer = VersionUtils.getRemoteVersion();
         String localVer = VersionUtils.getLocalVersion();
         if(remoteVer.equalsIgnoreCase(localVer)) return;
-        System.out.println(highlight("=================================",Color.RED_BRIGHT));
-        System.out.println(highlight("There is a new version available: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+remoteVer));
-        System.out.println(highlight("Your current version: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+localVer));
-        System.out.println(highlight("Go here and download latest version: ",Color.GREEN_BRIGHT)+highlight("https://github.com/KickVN/SaliensAuto/releases",Color.CYAN_BRIGHT));
-        System.out.println(highlight("=================================",Color.RED_BRIGHT));
+        debug(highlight("=================================",Color.RED_BRIGHT));
+        debug(highlight("There is a new version available: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+remoteVer));
+        debug(highlight("Your current version: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+localVer));
+        debug(highlight("Go here and download latest version: ",Color.GREEN_BRIGHT)+highlight("https://github.com/KickVN/SaliensAuto/releases",Color.CYAN_BRIGHT));
+        debug(highlight("=================================",Color.RED_BRIGHT));
     }
 
     public static void checkVersion(){
+        //Only check every 5 zones
+        if(vcCounter<5){
+            vcCounter++;
+            return;
+        }
+        vcCounter=0;
+
         if(versionThread!=null && !versionThread.isInterrupted()) versionThread.interrupt();
         versionThread = new CheckVersionThread();
         versionThread.start();
+    }
+
+    public static void debug(String s){
+        System.out.println("["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s);
     }
 
     private static class ProcessThread extends Thread {
@@ -370,7 +384,7 @@ public class Main {
                     progress();
                 }catch (Exception e){}
             }
-            System.out.println(highlight("Automation stopped",Color.RED_BRIGHT));
+            debug(highlight("Automation stopped",Color.RED_BRIGHT));
         }
     }
     private static class CheckVersionThread extends Thread {

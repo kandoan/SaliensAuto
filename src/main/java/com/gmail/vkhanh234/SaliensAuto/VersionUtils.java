@@ -23,8 +23,4 @@ public class VersionUtils {
         }
         return "";
     }
-
-    public static boolean isOutdatedVersion(){
-        return !getLocalVersion().equalsIgnoreCase(getRemoteVersion());
-    }
 }
