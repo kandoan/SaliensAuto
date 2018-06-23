@@ -11,6 +11,14 @@ To those who want to edit/contribute to this, because of my lack of experience, 
 
 Also this project is inspired alot from [SalienCheat](https://github.com/SteamDatabase/SalienCheat). Big thanks.
 
+# Features
+* No web browser needed. Since this is a **Java** program, **not JavaSCRIPT**. It'll run as a standalone program which cost less resource than javascript's version. Because no browser means no images, assests, sounds... need to be loaded.
+* Easier to install. I think? At least I'm sure it's easier than the PHP's one. You just have to install Java which is pretty common nowaday so some of you may have already installed it anyway (especially those minecraft players). With java installed, you can easily open this program by just opening a file I included in the download.
+* Pretty much has the same features as other's automation. **Auto join zone/planet, auto repeat, auto kill, invincibility, always max points,...**
+* 2 mode to search for zone/planet. 
+** First mode is to search for planet with the most captured rate so you can hop in and spend as much time in those planets to have more chance winning the games before the plannet closed
+** Second mode is to aggressive search for planet with the most XP return (most higher difficulty zone). With this, you'll level up quicker since it'll always automatically join a planet/zone with highest difficulty possible (hard difficulty).
+
 # Download
 Go here: https://github.com/KickVN/SaliensAuto/releases
 
