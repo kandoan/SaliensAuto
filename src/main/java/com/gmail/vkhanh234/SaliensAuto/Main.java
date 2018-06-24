@@ -123,7 +123,7 @@ public class Main {
                 debug("Wait 5s");
                 Thread.sleep(5000);
                 if(!reportScore()){
-                    debug(highlight("Failed completing the instance",Color.RED_BRIGHT));
+                    debug(highlight("Failed to complete the instance. It could mean the zone is captured.",Color.RED_BRIGHT));
                 }
                 leaveCurrentGame();
                 debug(highlight("===================================",Color.GREEN_BRIGHT));
