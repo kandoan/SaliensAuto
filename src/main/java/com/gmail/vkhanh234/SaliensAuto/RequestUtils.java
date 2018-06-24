@@ -48,7 +48,8 @@ public class RequestUtils {
             in.close();
             return result.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.debug("&aError: &rCan't connect to Steam Server. Server down? Let's wait a little while.");
+//            e.printStackTrace();
             return null;
         }
     }
@@ -79,7 +80,8 @@ public class RequestUtils {
             in.close();
             return result.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            Main.debug("&aError: &rCan't connect to Steam Server. Server down? Let's wait a little while.");
             return null;
         }
     }

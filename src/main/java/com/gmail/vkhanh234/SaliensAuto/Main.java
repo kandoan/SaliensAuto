@@ -431,10 +431,12 @@ public class Main {
                     leaveCurrentGame();
                     leaveCurrentPlanet();
                     progress();
-                }catch (Exception e){e.printStackTrace();}
-                debug("Restarting in 5s...");
+                }catch (Exception e){
+                    if(!(e instanceof NullPointerException)) e.printStackTrace();
+                }
+                debug("Restarting in 8s...");
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(8000);
                 } catch (InterruptedException e) {
                 }
             }
