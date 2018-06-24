@@ -48,7 +48,7 @@
                             <!--<includeGroupIds>org.hyperic</includeGroupIds>-->
                             <!--<includeArtifactIds>sigar-dist</includeArtifactIds>-->
                             <outputDirectory>
-                                ${project.build.directory}
+                                ${project.build.directory}/classes
                                 <!-- or: ${project.basedir}/wherever/you/want/it -->
                             </outputDirectory>
                         </configuration>
