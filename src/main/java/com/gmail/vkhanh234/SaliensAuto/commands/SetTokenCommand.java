@@ -14,6 +14,7 @@ public class SetTokenCommand extends CommandAbstract {
     public boolean onCommand(String[] args) {
         if(args.length==0) return false;
         Main.token = args[0];
+        Main.debug("&eToken &rhas been set to &e"+args[0]);
         return true;
     }
 }

@@ -76,7 +76,7 @@ public class Main {
     public static void start(){
         stop();
         pause=false;
-        debug("Starting with token "+highlight(token)+" and search mode "+highlight(planetSearchMode+"")+"...");
+        debug("Starting >> Token: "+highlight(token)+" - Search mode: "+highlight(planetSearchMode+""));
         thread = new ProcessThread();
         thread.start();
 
@@ -171,6 +171,22 @@ public class Main {
             case 3: return 20;
         }
         return 0;
+    }
+
+    public static void changeGroup(String clanid){
+        debug("Changing group...");
+        PlayerInfo info = getPlayerInfo();
+        if(info.clan_info==null || !String.valueOf(info.clan_info.accountid).equals(clanid)) {
+            RequestUtils.post("ITerritoryControlMinigameService/RepresentClan", "clanid=" + clanid);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {}
+            PlayerInfo check = getPlayerInfo();
+            if(check.clan_info!=null && String.valueOf(check.clan_info.accountid).equals(clanid)) {
+                debug("Successfully changed group to &e"+check.clan_info.name);
+            } else debug("&aError:&r Can't changed group. Make sure the groupid is correct.");
+        }
+        else debug("&aError:&r You have already represented this group");
     }
 
     private static boolean joinZone() {

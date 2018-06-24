@@ -16,6 +16,7 @@ public class SetSearchModeCommand extends CommandAbstract {
         try{
             int mode = Integer.valueOf(args[0]);
             Main.planetSearchMode = mode;
+            Main.debug("&eSearch mode &rhas been set to &e"+Main.planetSearchMode);
         }
         catch (Exception e){}
         return true;

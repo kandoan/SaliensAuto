@@ -12,6 +12,7 @@ public class CommandManager {
         addCommand(new SetTokenCommand());
         addCommand(new SetSearchModeCommand());
         addCommand(new PlanetsInfoCommand());
+        addCommand(new ChangeGroupCommand());
 
         addCommand(new StartCommand());
         addCommand(new StopCommand());
