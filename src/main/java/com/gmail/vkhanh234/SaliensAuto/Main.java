@@ -384,8 +384,12 @@ public class Main {
                     leaveCurrentGame();
                     leaveCurrentPlanet();
                     progress();
-                }catch (Exception e){}
-                debug("Restarting...");
+                }catch (Exception e){e.printStackTrace();}
+                debug("Restarting in 8s...");
+                try {
+                    Thread.sleep(8000);
+                } catch (InterruptedException e) {
+                }
             }
             debug(highlight("Automation stopped",Color.RED_BRIGHT));
         }

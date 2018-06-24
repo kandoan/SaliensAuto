@@ -40,6 +40,8 @@ public class RequestUtils {
             while ((line = in.readLine()) != null) {
                 result.append(line);
             }
+            conn.disconnect();
+            in.close();
             return result.toString();
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,6 +71,8 @@ public class RequestUtils {
             while ((line = in.readLine()) != null) {
                 result.append(line);
             }
+            conn.disconnect();
+            in.close();
             return result.toString();
         } catch (IOException e) {
             e.printStackTrace();
@@ -96,6 +100,8 @@ public class RequestUtils {
             while ((line = in.readLine()) != null) {
                 result.append(line);
             }
+            conn.disconnect();
+            in.close();
             return result.toString();
         } catch (IOException e) {
             e.printStackTrace();
