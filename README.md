@@ -61,12 +61,14 @@ I've never tried linux or mac before. So, I'm sorry but I can't help you here.
 # Commands
 After you openned up the program, you will see a list of commands:
 ```
-         settoken <token> - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get your token
-         setsearchmode 0 - (Default mode) Choose planet with the highest captured rate to have a chance winning games
-         setsearchmode 1 - Choose planet with the highest difficulties to get more XP
-         start - Start automating
-         stop - Stop automating
-         exit - What can this do? Idk. Figure it out by yourself.
+       settoken <token> - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get it.
+       setsearchmode <1/0> - Set the search mode. Set to 0 (default) to search for highest captured rate planet. 
+                             Set to 1 to search for planet with most XP reward.
+       planetsinfo - Show brief info of all active planets
+       changegroup <groupid> - Change the group you represent. ID 33035916 is /r/saliens group.
+       start - Start the automating process
+       stop - Stop the automating process
+       exit - Exit the program
 ```
 Easy to understand right? 
 First you set your token with *settoken*. Then you change the search mode with *setsearchmode* if necessary. And then *start*.
