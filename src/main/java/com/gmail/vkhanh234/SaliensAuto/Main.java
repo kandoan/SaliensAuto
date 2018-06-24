@@ -1,5 +1,6 @@
 package com.gmail.vkhanh234.SaliensAuto;
 
+import com.gmail.vkhanh234.SaliensAuto.commands.CommandManager;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfo;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
@@ -30,6 +31,8 @@ public class Main {
     public static boolean noHighDiff=true;
 
     public static int vcCounter=5;
+
+    public static CommandManager commandManager = new CommandManager();
     public static long lastSuccess=System.currentTimeMillis();
     public static void main(String[] args){
         AnsiConsole.systemInstall();
@@ -39,40 +42,17 @@ public class Main {
         debug(highlight("SaliensAuto "+ VersionUtils.getLocalVersion(),Color.PURPLE_BRIGHT));
         debug(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
                 +" regularly in case there is a new update"+Color.RESET);
-
+        commandManager.showHelps();
 
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
         if(args.length>=3) start();
 
-        sendHelp();
         Scanner scanner = new Scanner(System.in);
         while(true){
             String s = scanner.nextLine();
             if(s.length()==0) continue;
-            String[] spl = s.split(" ");
-            onCommand(spl[0],spl);
-        }
-    }
-
-    private static void onCommand(String s, String[] args) {
-        if(s.equalsIgnoreCase("settoken") && args.length>=2){
-            setToken(args[1]);
-        }
-        else if(s.equalsIgnoreCase("setsearchmode") && args.length>=2){
-            setPlanetSearchMode(Integer.parseInt(args[1]));
-        }
-        else if(s.equalsIgnoreCase("start")){
-            start();
-        }
-        else if(s.equalsIgnoreCase("stop")){
-            stop();
-        }
-        else if(s.equalsIgnoreCase("exit")){
-            System.exit(0);
-        }
-        else{
-            sendHelp();
+            commandManager.handleCommand(s);
         }
     }
 
@@ -86,19 +66,7 @@ public class Main {
         debug(highlight("Token")+" has been set to "+highlight(token));
     }
 
-    private static void sendHelp() {
-        debug(
-                highlight("Commands List: \n",Color.CYAN_BRIGHT)
-                +"\t "+highlight("settoken <token>")+" - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get your token\n"
-                +"\t "+highlight("setsearchmode 0")+" - (Default mode) Choose planet with the highest captured rate to have a chance of winning games and finish off planets to let new one bloom\n"
-                +"\t "+highlight("setsearchmode 1")+" - Choose planet with the highest difficulties to get more XP\n"
-                +"\t "+highlight("start")+" - Start automating\n"
-                +"\t "+highlight("stop")+" - Stop automating\n"
-                +"\t "+highlight("exit")+" - What can this do? Idk. Figure it out by yourself."
-        );
-    }
-
-    private static void stop() {
+    public static void stop() {
         if(thread!=null && !thread.isInterrupted()) {
             pause=true;
             thread.interrupt();
@@ -115,10 +83,10 @@ public class Main {
 
     }
 
-    private static String highlight(String s) {
+    public static String highlight(String s) {
         return highlight(s,Color.YELLOW_BRIGHT);
     }
-    private static String highlight(String s,String color) {
+    public static String highlight(String s, String color) {
         return color+s+Color.RESET;
     }
 
