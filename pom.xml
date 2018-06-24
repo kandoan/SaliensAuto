@@ -7,7 +7,9 @@
     <groupId>com.gmail.vkhanh234</groupId>
     <artifactId>SaliensAuto</artifactId>
     <version>1.1.0</version>
+    <packaging>jar</packaging>
     <build>
+        <finalName>SaliensAuto</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -29,8 +31,6 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
-                    <!--<source>7</source>-->
-                    <!--<target>7</target>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -45,11 +45,8 @@
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <!--<includeGroupIds>org.hyperic</includeGroupIds>-->
-                            <!--<includeArtifactIds>sigar-dist</includeArtifactIds>-->
                             <outputDirectory>
                                 ${project.build.directory}/classes
-                                <!-- or: ${project.basedir}/wherever/you/want/it -->
                             </outputDirectory>
                         </configuration>
                     </execution>
