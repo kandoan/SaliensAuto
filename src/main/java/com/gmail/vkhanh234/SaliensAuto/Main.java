@@ -12,8 +12,6 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import org.fusesource.jansi.*;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -331,6 +329,30 @@ public class Main {
         debug(highlight("Your current version: ",Color.GREEN)+highlight("SaliensAuto "+localVer));
         debug(highlight("Go here and download latest version: ",Color.GREEN)+highlight("https://github.com/KickVN/SaliensAuto/releases",Color.AQUA));
         debug(highlight("=================================",Color.RED));
+    }
+
+    public static String getDiffText(int diff){
+        switch (diff) {
+            case 1: return "easy";
+            case 2: return "medium";
+            case 3: return "hard";
+            case 4: return "BOSS";
+        }
+        return "???";
+    }
+
+    public static String addDiffColor(String s,int diff){
+        return highlight(s,getDiffColor(diff));
+    }
+
+    public static Color getDiffColor(int diff){
+        switch (diff) {
+            case 1: return Color.GREEN;
+            case 2: return Color.AQUA;
+            case 3: return Color.LIGHT_PURPLE;
+            case 4: return Color.RED;
+        }
+        return Color.RESET;
     }
 
     public static void checkVersion(){

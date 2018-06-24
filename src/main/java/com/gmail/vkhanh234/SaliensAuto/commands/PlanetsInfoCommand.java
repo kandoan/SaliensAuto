@@ -1,7 +1,9 @@
 package com.gmail.vkhanh234.SaliensAuto.commands;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
+import com.gmail.vkhanh234.SaliensAuto.PlanetsUtils;
 import com.gmail.vkhanh234.SaliensAuto.ProgressUtils;
+import com.gmail.vkhanh234.SaliensAuto.colors.Color;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.TopClan;
@@ -25,22 +27,8 @@ public class PlanetsInfoCommand extends CommandAbstract {
     }
 
     private void showInfo(Planet planet) {
-        Main.debug(
-                "> Planet id: &e"+planet.id
-                +"&r - Name: &e"+planet.extractName()
-                +"&r - Captured rate: &a"+ProgressUtils.round(planet.state.capture_progress*100,2)+"%"
-                +"&r - Current players: &b"+planet.state.current_players
-                +"&r - Total players: &b"+planet.state.total_joins
-                +"&r - Priority: &d"+planet.state.priority
-        );
-        Main.debug("\t Top Clans: "+getTopClanText(planet));
-    }
-
-    private String getTopClanText(Planet planet) {
-        String s="";
-        for(TopClan clan:planet.top_clans){
-            s+="&b"+clan.clan_info.name+" &r(&a"+clan.num_zones_controled+" zones&r), ";
-        }
-        return s.substring(0,s.length()-2);
+        Main.debug(PlanetsUtils.getPlanetsDetailsText(planet));
+        Main.debug("\t Zones: "+PlanetsUtils.getZonesText(planet));
+        Main.debug("\t Top Clans: "+PlanetsUtils.getTopClanText(planet));
     }
 }
