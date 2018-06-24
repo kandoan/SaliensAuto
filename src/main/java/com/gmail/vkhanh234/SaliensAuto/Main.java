@@ -286,8 +286,8 @@ public class Main {
             int[] difficuties = planetData.getDifficulties();
             debug("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+") has "+highlight(difficuties[1]+"",Color.GREEN_BRIGHT)
                     +" low, "+highlight(difficuties[2]+"",Color.CYAN_BRIGHT)+" medium and "+highlight(difficuties[3]+"",Color.RED_BRIGHT)+" high");
-            if(difficuties[3]>0) noHighDiff=false;
-            for(int i=3;i>=1;i--){
+            if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
+            for(int i=4;i>=1;i--){
                 if(max[i]<difficuties[i]){
                     max=difficuties;
                     id=planet.id;

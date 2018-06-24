@@ -11,9 +11,11 @@ public class Planet{
         int maxDiff = Integer.MIN_VALUE;
         Zone res = null;
         for(Zone zone:zones){
-            if(zone.captured || zone.capture_progress>=0.96) continue;
-            if(maxDiff<zone.difficulty){
-                maxDiff=zone.difficulty;
+            if(zone.captured || zone.capture_progress>=0.92) continue;
+            int diff = zone.difficulty;
+            if(zone.type==4) diff=4;
+            if(maxDiff<diff){
+                maxDiff=diff;
                 res = zone;
             }
         }
@@ -21,10 +23,11 @@ public class Planet{
     }
 
     public int[] getDifficulties() {
-        int[] result = new int[4];
+        int[] result = new int[5];
         for(Zone zone:zones){
-            if(zone.captured || zone.capture_progress>=0.96) continue;
-            result[zone.difficulty]++;
+            if(zone.captured || zone.capture_progress>=0.92) continue;
+            if(zone.type==4) result[4]++;
+            else result[zone.difficulty]++;
         }
         return result;
     }
