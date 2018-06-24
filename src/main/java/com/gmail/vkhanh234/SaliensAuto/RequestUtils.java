@@ -20,6 +20,8 @@ public class RequestUtils {
             byte[] postData = dat.getBytes(StandardCharsets.UTF_8);
             URL url = new URL("https://community.steam-api.com/"+type+"/v0001/");
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("POST");
@@ -49,6 +51,8 @@ public class RequestUtils {
             trustAllHosts();
             URL url = new URL("https://community.steam-api.com/ITerritoryControlMinigameService/"+type+"/v0001/?"+dat);
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("GET");
@@ -77,6 +81,8 @@ public class RequestUtils {
             trustAllHosts();
             URL url = new URL("https://api.github.com/repos/KickVN/SaliensAuto/"+text);
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("GET");

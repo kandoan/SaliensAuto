@@ -279,7 +279,7 @@ public class Main {
 
     public static String getMostXpPlanet(Planets planets){
         noHighDiff=true;
-        int[] max = new int[4];
+        int[] max = new int[5];
         String id = "1";
         for(Planet planet:planets.planets){
             Planet planetData = getPlanetData(planet.id);
