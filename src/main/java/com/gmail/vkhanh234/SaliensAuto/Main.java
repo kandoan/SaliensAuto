@@ -145,11 +145,12 @@ public class Main {
             if(res!=null && res.response!=null){
                 ReportScore response = res.response;
                 if(response==null || response.new_score==null) return false;
-                debug(highlight("Completed an instance. You have reached level "+highlight(response.new_level+"")
-                        +" ("+highlight(response.new_score)+"/"+highlight(response.next_level_score)+" ~ "
-                        +highlight(ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"")+"%)",Color.AQUA));
+                debug("&bFinished. Your progress >> Level: &e"+response.new_level
+                        +"&b - XP: &r(&e"+response.new_score+"&r/&e"+response.next_level_score+"&r)"
+                        +"&b - XP Percent: &a"+ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"%"
+                        +"&b - XP Required: &e"+(Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score)));
                 int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
-                debug(highlight("At this rate, to reach next level, you need to wait at least ",Color.AQUA)+highlight(ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty))));
+                debug("\t&bApprox time left to reach Level &e"+(response.new_level+1)+"&b: &d"+ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty)));
                 return true;
             }
         } catch (IOException e) {

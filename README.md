@@ -3,6 +3,8 @@ Automate Steam's Saliens
 
 First, when you keep reading, there might be some broken English because I'm not a native English speaker. I'm sorry.
 
+If you need helps, just post on [this Reddit thread](https://www.reddit.com/r/Saliens/comments/8t2g0w/java_another_salienss_botting_program_but_in_java/) or message my reddit account (the one posted the thread) because I'm on reddit most of my time. You can create an issue here on github too but I don't check it that often.
+
 # Features
 * No web browser needed. Since this is a **Java** program, **not JavaSCRIPT**. It'll run as a standalone program which cost less resource than javascript's version. Because no browser means no images, assests, sounds... need to be loaded.
 * Easier to install. I think? At least I'm sure it's easier than the PHP's one. You just have to install Java which is pretty common nowaday so some of you may have already installed it anyway (especially those minecraft players). With java installed, you can easily open this program by just opening a file I included in the download.
