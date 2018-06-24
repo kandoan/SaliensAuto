@@ -5,6 +5,7 @@ First, when you keep reading, there might be some broken English because I'm not
 
 If you need helps, just post on [this Reddit thread](https://www.reddit.com/r/Saliens/comments/8t2g0w/java_another_salienss_botting_program_but_in_java/) or message my reddit account (the one posted the thread) because I'm on reddit most of my time. You can create an issue here on github too but I don't check it that often.
 
+If you want to automate 24/24 without keeping your PC on 24/24, read far below in the *Heroku* section. Quite complicated though.
 # Features
 * No web browser needed. Since this is a **Java** program, **not JavaSCRIPT**. It'll run as a standalone program which cost less resource than javascript's version. Because no browser means no images, assests, sounds... need to be loaded.
 * Easier to install. I think? At least I'm sure it's easier than the PHP's one. You just have to install Java which is pretty common nowaday so some of you may have already installed it anyway (especially those minecraft players). With java installed, you can easily open this program by just opening a file I included in the download.
@@ -99,5 +100,9 @@ Your token is the nonsense path in between two quotes. Here is *10a654252939d458
 You absolutely can. Just open the program multiple times and make sure to set the token different each time (either by *settoken* command or *\[args]*) then *start* as usual.
 
 Please keep in mind that you still can't open multiple instances for the same account to boost your progress speed. This is only available for botting multiple accounts with different tokens at the same time.
+
+# Automate with Heroku
+Read more here: https://github.com/KickVN/SaliensAuto/wiki/Heroku
+
 # Acknowledgments
 This project is inspired from [SalienCheat](https://github.com/SteamDatabase/SalienCheat). Big thank.
