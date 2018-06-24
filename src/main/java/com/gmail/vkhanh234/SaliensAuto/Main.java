@@ -51,7 +51,9 @@ public class Main {
         while(true){
             String s = scanner.nextLine();
             if(s.length()==0) continue;
-            commandManager.handleCommand(s);
+            try {
+                commandManager.handleCommand(s);
+            }catch (Exception e){e.printStackTrace();}
         }
     }
 
