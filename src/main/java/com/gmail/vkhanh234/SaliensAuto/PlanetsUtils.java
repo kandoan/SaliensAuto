@@ -3,10 +3,13 @@ package com.gmail.vkhanh234.SaliensAuto;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.TopClan;
+import com.gmail.vkhanh234.SaliensAuto.data.Planet.Zone;
 
 public class PlanetsUtils {
     public static String getZonesText(Planet p) {
-        Planet planetData = Main.getPlanetData(p.id);
+        Planet planetData;
+        if(p.zones==null || p.zones.size()==0) planetData = Main.getPlanetData(p.id);
+        else planetData=p;
         int[] difficuties = planetData.getDifficulties();
         String s = "";
         for(int i=1;i<=4;i++){
@@ -23,13 +26,25 @@ public class PlanetsUtils {
         return s.substring(0,s.length()-2);
     }
 
+    public static String getZoneDetailsText(Zone zone){
+        return "Position: &e"+zone.zone_position+" ("+getRowColumnText(zone.zone_position)+")"
+                +"&r - Difficulty: "+zone.getDifficultyText()
+                +"&r - Captured rate: &a"+ProgressUtils.round(zone.capture_progress*100,2)+"%"
+                ;
+    }
+
+    private static String getRowColumnText(int pos) {
+        int col = pos%12;
+        int row = pos/12;
+        return "Row "+(row+1)+", Column "+(col+1);
+    }
+
     public static String getPlanetsDetailsText(Planet planet) {
-        return "> Planet id: &e"+planet.id
+        return "ID: &e"+planet.id
                 +"&r - Name: &e"+planet.extractName()
                 +"&r - Captured rate: &a"+ProgressUtils.round(planet.state.capture_progress*100,2)+"%"
                 +"&r - Current players: &b"+planet.state.current_players
                 +"&r - Total players: &b"+planet.state.total_joins
                 +"&r - Priority: &d"+planet.state.priority;
     }
-
 }

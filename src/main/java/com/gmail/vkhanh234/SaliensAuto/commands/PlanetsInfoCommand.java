@@ -27,7 +27,7 @@ public class PlanetsInfoCommand extends CommandAbstract {
     }
 
     private void showInfo(Planet planet) {
-        Main.debug(PlanetsUtils.getPlanetsDetailsText(planet));
+        Main.debug("> Planet "+PlanetsUtils.getPlanetsDetailsText(planet));
         Main.debug("\t Zones: "+PlanetsUtils.getZonesText(planet));
         Main.debug("\t Top Clans: "+PlanetsUtils.getTopClanText(planet));
     }

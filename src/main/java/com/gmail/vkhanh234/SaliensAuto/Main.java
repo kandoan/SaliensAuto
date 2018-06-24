@@ -135,8 +135,8 @@ public class Main {
 
     private static boolean reportScore(){
         int score = getZoneScore();
-        debug("Attempt to complete an instance with a score of "+highlight(score+"")
-                +" in zone "+highlight(currentZone.zone_position+"")+"(difficulty "+highlight(currentZone.difficulty+"")+")");
+        debug("Finishing an instance >> Score: &e"+score
+                +"&r - Zone "+PlanetsUtils.getZoneDetailsText(currentZone));
         String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportScoreResponse> jsonAdapter = moshi.adapter(ReportScoreResponse.class);
@@ -173,7 +173,8 @@ public class Main {
     }
 
     private static boolean joinZone() {
-        debug("Attempt to join zone "+highlight(currentZone.zone_position+"")+" (difficulty "+highlight(currentZone.difficulty+"")+")");
+//        debug("Joining zone "+currentZone.zone_position+" (difficulty "+highlight(currentZone.difficulty+"")+")");
+        debug("Joining Zone "+PlanetsUtils.getZoneDetailsText(currentZone));
         String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
@@ -240,7 +241,7 @@ public class Main {
         String id="1";
         for(Planet planet:planets.planets){
             if(planet.state==null || !planet.state.active || planet.state.captured) continue;
-            debug("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+")'s priority is "+highlight(planet.state.priority+""));
+            debug("> Planet "+PlanetsUtils.getPlanetsDetailsText(planet));
             if(min>planet.state.priority){
                 min = planet.state.priority;
                 id=planet.id;
@@ -257,8 +258,8 @@ public class Main {
         for(Planet planet:planets.planets){
             Planet planetData = getPlanetData(planet.id);
             int[] difficuties = planetData.getDifficulties();
-            debug("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+") has "+highlight(difficuties[1]+"",Color.GREEN)
-                    +" low, "+highlight(difficuties[2]+"",Color.AQUA)+" medium and "+highlight(difficuties[3]+"",Color.RED)+" high");
+            debug("> Planet "+PlanetsUtils.getPlanetsDetailsText(planetData));
+            debug("\tZones: "+PlanetsUtils.getZonesText(planetData));
             if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
             for(int i=4;i>=1;i--){
                 if(max[i]<difficuties[i]){
