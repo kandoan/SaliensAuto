@@ -13,6 +13,10 @@ import java.security.cert.CertificateException;
 
 public class RequestUtils {
     public static String post(String type, String dat) {
+        if(Main.token==null){
+            Main.debug("&eError:&r Token hasn't been set yet");
+            return null;
+        }
         try {
             trustAllHosts();
             if(dat.length()>0) dat+="&access_token="+Main.token;
