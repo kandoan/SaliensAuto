@@ -31,6 +31,7 @@ public class Main {
     public static boolean noHighDiff=true;
 
     public static int vcCounter=5;
+    public static int noHighCounter=0;
 
     public static CommandManager commandManager = new CommandManager();
     public static long lastSuccess=System.currentTimeMillis();
@@ -298,9 +299,12 @@ public class Main {
         Planet planet = getPlanetData(currentPlanet);
         if(planet==null) return null;
         Zone zone = planet.getAvailableZone();
-        if(planetSearchMode==1 && zone.difficulty<3 && !noHighDiff) return null;
+        if(planetSearchMode==1 && zone.difficulty<3 && (!noHighDiff || noHighCounter>=4)) {
+            noHighCounter=0;
+            return null;
+        }
         else {
-            noHighDiff=false;
+            if(noHighDiff) noHighCounter++;
             return zone;
         }
     }
@@ -428,9 +432,9 @@ public class Main {
                     leaveCurrentPlanet();
                     progress();
                 }catch (Exception e){e.printStackTrace();}
-                debug("Restarting in 8s...");
+                debug("Restarting in 5s...");
                 try {
-                    Thread.sleep(8000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                 }
             }
