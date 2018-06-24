@@ -390,7 +390,11 @@ public class Main {
     private static class CheckVersionThread extends Thread {
         @Override
         public void run() {
-            compareVersion();
+            try {
+                compareVersion();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 }
