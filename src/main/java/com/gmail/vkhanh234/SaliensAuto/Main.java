@@ -7,8 +7,10 @@ import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.*;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import org.fusesource.jansi.AnsiConsole;
+import org.fusesource.jansi.*;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,6 +30,7 @@ public class Main {
     public static boolean noHighDiff=true;
 
     public static int vcCounter=5;
+    public static long lastSuccess=System.currentTimeMillis();
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
@@ -125,7 +128,6 @@ public class Main {
             return;
         }
         else {
-            debug("Attempting to progress in planet " + highlight(currentPlanet));
             joinPlanet();
         }
         while(!pause) {
@@ -158,6 +160,7 @@ public class Main {
                 leaveCurrentGame();
                 debug(highlight("===================================",Color.GREEN_BRIGHT));
             } catch (InterruptedException e) {
+                if(!pause) e.printStackTrace();
                 return;
             }
         }
@@ -165,7 +168,7 @@ public class Main {
 
     private static boolean reportScore(){
         int score = getZoneScore();
-        debug("Attempting to complete an instance with a score of "+highlight(score+"")
+        debug("Attempt to complete an instance with a score of "+highlight(score+"")
                 +" in zone "+highlight(currentZone.zone_position+"")+"(difficulty "+highlight(currentZone.difficulty+"")+")");
         String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
         Moshi moshi = new Moshi.Builder().build();
@@ -203,7 +206,7 @@ public class Main {
     }
 
     private static boolean joinZone() {
-        debug("Attempting to join zone "+highlight(currentZone.zone_position+"")+" (difficulty "+highlight(currentZone.difficulty+"")+")");
+        debug("Attempt to join zone "+highlight(currentZone.zone_position+"")+" (difficulty "+highlight(currentZone.difficulty+"")+")");
         String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
@@ -218,11 +221,13 @@ public class Main {
     }
 
     private static void joinPlanet() {
+        debug("Attempt to progress in planet " + highlight(currentPlanet));
         RequestUtils.post("ITerritoryControlMinigameService/JoinPlanet","id="+currentPlanet);
     }
 
 
     public static void leaveCurrentGame(){
+        debug("Attempt to leave previous zone");
         PlayerInfo info = getPlayerInfo();
         if(info.active_zone_game!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_zone_game);
@@ -232,6 +237,7 @@ public class Main {
     }
 
     public static void leaveCurrentPlanet(){
+        debug("Attempt to leave previous planet");
         PlayerInfo info = getPlayerInfo();
         if(info.active_planet!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
@@ -301,6 +307,7 @@ public class Main {
     }
 
     public static Zone getAvailableZone(){
+        debug("Searching for zone");
         Planet planet = getPlanetData(currentPlanet);
         if(planet==null) return null;
         Zone zone = planet.getAvailableZone();
@@ -371,8 +378,35 @@ public class Main {
     }
 
     public static void debug(String s){
-        System.out.println("["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s);
+        String msg = "["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s;
+        System.out.println(msg);
+//        log(msg);
     }
+
+//    private static void log(String msg) {
+//        BufferedWriter out = null;
+//        try
+//        {
+//            FileWriter fstream = new FileWriter("SaliensAuto logs.txt", true);
+//            out = new BufferedWriter(fstream);
+//            out.write(+"\n");
+//
+//        }
+//        catch (IOException e)
+//        {
+////            e.printStackTrace();
+//        }
+//        finally
+//        {
+//            if(out != null) {
+//                try {
+//                    out.close();
+//                } catch (IOException e) {
+////                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
     private static class ProcessThread extends Thread {
         @Override
@@ -383,6 +417,7 @@ public class Main {
                     leaveCurrentPlanet();
                     progress();
                 }catch (Exception e){}
+                debug("Restarting...");
             }
             debug(highlight("Automation stopped",Color.RED_BRIGHT));
         }
