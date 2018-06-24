@@ -1,12 +1,9 @@
 package com.gmail.vkhanh234.SaliensAuto.commands;
 
-import com.gmail.vkhanh234.SaliensAuto.Color;
 import com.gmail.vkhanh234.SaliensAuto.Main;
+import com.gmail.vkhanh234.SaliensAuto.colors.Color;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class CommandManager {
     LinkedHashMap<String,CommandAbstract> commands = new LinkedHashMap<>();
@@ -20,7 +17,7 @@ public class CommandManager {
     }
 
     public void addCommand(CommandAbstract cmd){
-        commands.put(cmd.getName(),cmd);
+        commands.put(cmd.getName().toLowerCase(),cmd);
     }
 
     public void handleCommand(String s){
@@ -29,7 +26,7 @@ public class CommandManager {
             showHelps();
             return;
         }
-        CommandAbstract cmd = commands.get(spl[0]);
+        CommandAbstract cmd = commands.get(spl[0].toLowerCase());
         if(!cmd.onCommand(buildArgs(spl))){
             cmd.showHelp();
         }
@@ -44,8 +41,8 @@ public class CommandManager {
     public void showHelp(CommandAbstract cmd) {
     }
     public void showHelps() {
-        Main.debug(Main.highlight("Commands List: ", Color.CYAN_BRIGHT));
+        Main.debug("&bCommands List: ");
         for(CommandAbstract cmd : commands.values()) cmd.showHelp();
-        Main.debug("Fill the value in between but don't include the "+Main.highlight("< > and [ ]")+" while using command." );
+        Main.debug("Don't include the &b< >&r and &b[ ]&r while using command, only the value accordingly." );
     }
 }

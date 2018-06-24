@@ -1,5 +1,7 @@
 package com.gmail.vkhanh234.SaliensAuto;
 
+import com.gmail.vkhanh234.SaliensAuto.colors.Color;
+import com.gmail.vkhanh234.SaliensAuto.colors.ColorParser;
 import com.gmail.vkhanh234.SaliensAuto.commands.CommandManager;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfo;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
@@ -39,9 +41,8 @@ public class Main {
 
         checkVersion();
 
-        debug(highlight("SaliensAuto "+ VersionUtils.getLocalVersion(),Color.PURPLE_BRIGHT));
-        debug(Color.RED_BRIGHT+"Please keep checking "+Color.GREEN_BRIGHT+"https://github.com/KickVN/SaliensAuto"+Color.RED_BRIGHT
-                +" regularly in case there is a new update"+Color.RESET);
+        debug(highlight("SaliensAuto "+ VersionUtils.getLocalVersion(),Color.LIGHT_PURPLE));
+        debug("&rPlease keep checking &ahttps://github.com/KickVN/SaliensAuto &cregularly in case there is a new update");
         commandManager.showHelps();
 
         if(args.length>=1) setToken(args[0]);
@@ -71,7 +72,7 @@ public class Main {
             pause=true;
             thread.interrupt();
         }
-        debug(highlight("Stopping...",Color.RED_BRIGHT));
+        debug(highlight("Stopping...",Color.RED));
     }
 
     public static void start(){
@@ -84,15 +85,15 @@ public class Main {
     }
 
     public static String highlight(String s) {
-        return highlight(s,Color.YELLOW_BRIGHT);
+        return highlight(s,Color.YELLOW);
     }
-    public static String highlight(String s, String color) {
-        return color+s+Color.RESET;
+    public static String highlight(String s, Color color) {
+        return color.getTag()+s+Color.RESET.getTag();
     }
 
     private static void progress() {
         if(currentPlanet==null) {
-            debug(highlight("No planet found",Color.RED_BRIGHT));
+            debug(highlight("No planet found",Color.RED));
             return;
         }
         else {
@@ -101,11 +102,11 @@ public class Main {
         while(!pause) {
             currentZone = getAvailableZone();
             if (currentZone == null) {
-                debug(highlight("No zone found",Color.RED_BRIGHT));
+                debug(highlight("No zone found",Color.RED));
                 return;
             }
             if (!joinZone()) {
-                debug(highlight("Failed joining zone " + highlight(currentZone.zone_position+""),Color.RED_BRIGHT));
+                debug(highlight("Failed joining zone " + highlight(currentZone.zone_position+""),Color.RED));
                 return;
             }
             try {
@@ -123,10 +124,10 @@ public class Main {
                 debug("Wait 5s");
                 Thread.sleep(5000);
                 if(!reportScore()){
-                    debug(highlight("Failed to complete the instance. It could mean the zone is captured.",Color.RED_BRIGHT));
+                    debug(highlight("Failed to complete the instance. It could mean the zone is captured.",Color.RED));
                 }
                 leaveCurrentGame();
-                debug(highlight("===================================",Color.GREEN_BRIGHT));
+                debug(highlight("===================================",Color.GREEN));
             } catch (InterruptedException e) {
                 if(!pause) e.printStackTrace();
                 return;
@@ -148,9 +149,9 @@ public class Main {
                 if(response==null || response.new_score==null) return false;
                 debug(highlight("Completed an instance. You have reached level "+highlight(response.new_level+"")
                         +" ("+highlight(response.new_score)+"/"+highlight(response.next_level_score)+" ~ "
-                        +highlight(ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"")+"%)",Color.CYAN_BRIGHT));
+                        +highlight(ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"")+"%)",Color.AQUA));
                 int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
-                debug(highlight("At this rate, to reach next level, you need to wait at least ",Color.CYAN_BRIGHT)+highlight(ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty))));
+                debug(highlight("At this rate, to reach next level, you need to wait at least ",Color.AQUA)+highlight(ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty))));
                 return true;
             }
         } catch (IOException e) {
@@ -199,7 +200,7 @@ public class Main {
         PlayerInfo info = getPlayerInfo();
         if(info.active_zone_game!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_zone_game);
-            debug(highlight("Left game "+highlight(info.active_zone_game),Color.CYAN_BRIGHT));
+            debug(highlight("Left game "+highlight(info.active_zone_game),Color.AQUA));
         }
         if(info.active_planet!=null) currentPlanet = info.active_planet;
     }
@@ -209,7 +210,7 @@ public class Main {
         PlayerInfo info = getPlayerInfo();
         if(info.active_planet!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
-            debug(highlight("Left planet "+highlight(info.active_planet),Color.CYAN_BRIGHT));
+            debug(highlight("Left planet "+highlight(info.active_planet),Color.AQUA));
         }
         currentPlanet = getAvailablePlanet();
     }
@@ -230,7 +231,7 @@ public class Main {
 
     public static String getAvailablePlanet()
     {
-        debug(highlight("Searching for planet...",Color.CYAN_BRIGHT));
+        debug(highlight("Searching for planet...",Color.AQUA));
         Planets planets = getPlanets();
         if(planets==null) return null;
         if(planetSearchMode==0) return getTopPriorityPlanet(planets);
@@ -247,7 +248,7 @@ public class Main {
                 id=planet.id;
             }
         }
-        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
+        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
         return id;
     }
 
@@ -258,8 +259,8 @@ public class Main {
         for(Planet planet:planets.planets){
             Planet planetData = getPlanetData(planet.id);
             int[] difficuties = planetData.getDifficulties();
-            debug("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+") has "+highlight(difficuties[1]+"",Color.GREEN_BRIGHT)
-                    +" low, "+highlight(difficuties[2]+"",Color.CYAN_BRIGHT)+" medium and "+highlight(difficuties[3]+"",Color.RED_BRIGHT)+" high");
+            debug("- Planet "+highlight(planet.id)+"("+highlight(planet.state.name)+") has "+highlight(difficuties[1]+"",Color.GREEN)
+                    +" low, "+highlight(difficuties[2]+"",Color.AQUA)+" medium and "+highlight(difficuties[3]+"",Color.RED)+" high");
             if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
             for(int i=4;i>=1;i--){
                 if(max[i]<difficuties[i]){
@@ -270,7 +271,7 @@ public class Main {
                 else if(max[i]>difficuties[i]) break;
             }
         }
-        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN_BRIGHT));
+        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
         return id;
     }
 
@@ -325,11 +326,11 @@ public class Main {
         String remoteVer = VersionUtils.getRemoteVersion();
         String localVer = VersionUtils.getLocalVersion();
         if(remoteVer.equalsIgnoreCase(localVer)) return;
-        debug(highlight("=================================",Color.RED_BRIGHT));
-        debug(highlight("There is a new version available: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+remoteVer));
-        debug(highlight("Your current version: ",Color.GREEN_BRIGHT)+highlight("SaliensAuto "+localVer));
-        debug(highlight("Go here and download latest version: ",Color.GREEN_BRIGHT)+highlight("https://github.com/KickVN/SaliensAuto/releases",Color.CYAN_BRIGHT));
-        debug(highlight("=================================",Color.RED_BRIGHT));
+        debug(highlight("=================================",Color.RED));
+        debug(highlight("There is a new version available: ",Color.GREEN)+highlight("SaliensAuto "+remoteVer));
+        debug(highlight("Your current version: ",Color.GREEN)+highlight("SaliensAuto "+localVer));
+        debug(highlight("Go here and download latest version: ",Color.GREEN)+highlight("https://github.com/KickVN/SaliensAuto/releases",Color.AQUA));
+        debug(highlight("=================================",Color.RED));
     }
 
     public static void checkVersion(){
@@ -346,8 +347,8 @@ public class Main {
     }
 
     public static void debug(String s){
-        String msg = "["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s;
-        System.out.println(msg);
+        String msg = "["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s+"&r";
+        System.out.println(ColorParser.parse(msg));
 //        log(msg);
     }
 
@@ -391,7 +392,7 @@ public class Main {
                 } catch (InterruptedException e) {
                 }
             }
-            debug(highlight("Automation stopped",Color.RED_BRIGHT));
+            debug(highlight("Automation stopped",Color.RED));
         }
     }
     private static class CheckVersionThread extends Thread {
