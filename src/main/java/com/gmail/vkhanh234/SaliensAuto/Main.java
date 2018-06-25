@@ -137,7 +137,7 @@ public class Main {
                 debug("Wait 5s");
                 Thread.sleep(5000);
                 if(!reportScore()){
-                    debug(highlight("Failed to complete the instance. It could mean the zone is captured.",Color.RED));
+                    debug(highlight("Failed to complete the instance. It could mean the zone is captured. Or you're opening Saliens somewhere else. Please close all things related to Saliens.",Color.RED));
                 }
                 leaveCurrentGame();
                 debug(highlight("===================================",Color.GREEN));
