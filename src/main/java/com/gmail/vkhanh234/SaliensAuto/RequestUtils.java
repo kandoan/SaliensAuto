@@ -14,9 +14,10 @@ import java.security.cert.CertificateException;
 public class RequestUtils {
     public static String post(String type, String dat) {
         if(Main.token==null){
-            Main.debug("&eError:&r Token hasn't been set yet");
+            Main.debug("&cError:&r Token hasn't been set yet");
             return null;
         }
+        int responseCode = -1;
         try {
             trustAllHosts();
             if(dat.length()>0) dat+="&access_token="+Main.token;
@@ -37,6 +38,7 @@ public class RequestUtils {
             conn.setUseCaches(false);
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
             wr.write(postData);
+            responseCode = conn.getResponseCode();
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             if (conn.getResponseCode() != 200) return null;
             StringBuilder result = new StringBuilder();
@@ -48,12 +50,24 @@ public class RequestUtils {
             in.close();
             return result.toString();
         } catch (IOException e) {
-            Main.debug("&aError: &rCan't connect to Steam Server. Server down? Let's wait a little while.");
-//            e.printStackTrace();
+            Main.debug("&cError: &rCan't connect to Steam Server.");
+            Main.debug("\t Response code: &e"+responseCode+" - &e"+getResponseMessage(responseCode));
             return null;
         }
     }
+
+    private static String getResponseMessage(int responseCode) {
+        switch (responseCode){
+            case 401: return "Unauthorized. It could mean your token is incorrect.";
+            case 403: return "Forbidden";
+            case 500: return "Internal Server Error";
+            case 503: return "Service Unavailable. Most likely this means server goes down.  Let's wait a little while.";
+        }
+        return "Unknown.";
+    }
+
     public static String get(String type, String dat) {
+        int responseCode = -1;
         try {
             trustAllHosts();
             URL url = new URL("https://community.steam-api.com/ITerritoryControlMinigameService/"+type+"/v0001/?"+dat);
@@ -69,6 +83,7 @@ public class RequestUtils {
             conn.setRequestProperty("Referer", "https://steamcommunity.com/saliengame/play");
             conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
             conn.setUseCaches(false);
+            responseCode = conn.getResponseCode();
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF8"));
             if (conn.getResponseCode() != 200) return null;
             StringBuilder result = new StringBuilder();
@@ -80,8 +95,8 @@ public class RequestUtils {
             in.close();
             return result.toString();
         } catch (IOException e) {
-//            e.printStackTrace();
-            Main.debug("&aError: &rCan't connect to Steam Server. Server down? Let's wait a little while.");
+            Main.debug("&cError: &rCan't connect to Steam Server.");
+            Main.debug("\t Response code: &e"+responseCode+" - &e"+getResponseMessage(responseCode));
             return null;
         }
     }

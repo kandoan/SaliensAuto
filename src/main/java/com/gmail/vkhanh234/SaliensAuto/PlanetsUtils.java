@@ -27,7 +27,7 @@ public class PlanetsUtils {
     }
 
     public static String getZoneDetailsText(Zone zone){
-        return "Position: &e"+zone.zone_position+" ("+getRowColumnText(zone.zone_position)+")"
+        return "Position: &e"+(zone.zone_position+1)+" ("+getRowColumnText(zone.zone_position)+")"
                 +"&r - Difficulty: "+zone.getDifficultyText()
                 +"&r - Captured rate: &a"+ProgressUtils.round(zone.capture_progress*100,2)+"%"
                 ;
@@ -46,5 +46,15 @@ public class PlanetsUtils {
                 +"&r - Current players: &b"+planet.state.current_players
                 +"&r - Total players: &b"+planet.state.total_joins
                 +"&r - Priority: &d"+planet.state.priority;
+    }
+
+    public static String getZonePosition(String s) {
+        if(s.contains(",")){
+            String[] spl = s.split(",");
+            int row = Integer.valueOf(spl[0])-1;
+            int col = Integer.valueOf(spl[1])-1;
+            return String.valueOf(row*12+col);
+        }
+        return String.valueOf(Integer.valueOf(s)-1);
     }
 }

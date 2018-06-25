@@ -19,6 +19,8 @@ import java.util.Scanner;
 
 
 public class Main {
+    public static final double MAX_CAPTURE_RATE = 0.93;
+
     public  static String token;
     public static String currentPlanet;
     public static Zone currentZone;
@@ -35,6 +37,9 @@ public class Main {
 
     public static CommandManager commandManager = new CommandManager();
     public static long lastSuccess=System.currentTimeMillis();
+
+    public static String focusPlanet;
+    public static String focusZone;
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
@@ -54,7 +59,7 @@ public class Main {
             if(s.length()==0) continue;
             try {
                 commandManager.handleCommand(s);
-            }catch (Exception e){e.printStackTrace();}
+            }catch (Exception e){if(!(e instanceof NullPointerException)) e.printStackTrace();}
         }
     }
 
@@ -80,6 +85,13 @@ public class Main {
         stop();
         pause=false;
         debug("Starting >> Token: "+highlight(token)+" - Search mode: "+highlight(planetSearchMode+""));
+        if(planetSearchMode==2) {
+            if(focusPlanet==null){
+                debug("\t &cPlease set a focused planet with &efocusplanet &ccommand first");
+                return;
+            }
+            debug("\t Focused on planet &e"+focusPlanet+" &r"+(focusZone!=null?("and zone &e"+(focusZone+1)):""));
+        }
         thread = new ProcessThread();
         thread.start();
 
@@ -187,9 +199,9 @@ public class Main {
             PlayerInfo check = getPlayerInfo();
             if(check.clan_info!=null && String.valueOf(check.clan_info.accountid).equals(clanid)) {
                 debug("Successfully changed group to &e"+check.clan_info.name);
-            } else debug("&aError:&r Can't changed group. Make sure the groupid is correct.");
+            } else debug("&cError:&r Couldn't change group. Make sure the groupid is correct and you have joined the group on Steam.");
         }
-        else debug("&aError:&r You have already represented this group");
+        else debug("&cError:&r You have already represented this group");
     }
 
     private static boolean joinZone() {
@@ -251,11 +263,28 @@ public class Main {
     public static String getAvailablePlanet()
     {
         debug(highlight("Searching for planet...",Color.AQUA));
+        if(planetSearchMode==2) return checkFocusPlanet();
         Planets planets = getPlanets();
         if(planets==null) return null;
         if(planetSearchMode==0) return getTopPriorityPlanet(planets);
-        else return getMostXpPlanet(planets);
+        if(planetSearchMode==1) return getMostXpPlanet(planets);
+        debug("&cError: &rSearch mode is not correct. Please set it again and re-start.");
+        stop();
+        return null;
     }
+
+    private static String checkFocusPlanet() {
+        Planet data = getPlanetData(focusPlanet);
+        if(!data.state.active || data.state.captured || data.state.capture_progress>MAX_CAPTURE_RATE){
+            debug("&bFocused Planet &e"+focusPlanet+" &bhas been captured");
+            debug("&bAtuomatically switched to search mode &e1 &binstead");
+            planetSearchMode=1;
+            return getAvailablePlanet();
+        }
+        debug("=> Choose focused Planet "+PlanetsUtils.getPlanetsDetailsText(data));
+        return focusPlanet;
+    }
+
     public static String getTopPriorityPlanet(Planets planets){
         int min = Integer.MAX_VALUE;
         String id="1";
@@ -336,13 +365,6 @@ public class Main {
         }
         return null;
     }
-
-//    public static void changeClan(String id){
-//        PlayerInfo info = getPlayerInfo();
-//        if(info.clan_info==null || !String.valueOf(info.clan_info.accountid).equalsIgnoreCase(id)){
-//
-//        }
-//    }
 
     public static void compareVersion(){
         String remoteVer = VersionUtils.getRemoteVersion();

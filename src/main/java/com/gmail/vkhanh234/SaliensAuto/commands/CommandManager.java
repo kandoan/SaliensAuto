@@ -11,7 +11,9 @@ public class CommandManager {
     public CommandManager() {
         addCommand(new SetTokenCommand());
         addCommand(new SetSearchModeCommand());
+        addCommand(new FocusPlanetCommand());
         addCommand(new PlanetsInfoCommand());
+        addCommand(new FocusZoneCommand());
         addCommand(new ChangeGroupCommand());
 
         addCommand(new StartCommand());
