@@ -8,10 +8,7 @@ import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.*;
-import com.gmail.vkhanh234.SaliensAuto.searchmode.FocusMode;
-import com.gmail.vkhanh234.SaliensAuto.searchmode.MostXpMode;
-import com.gmail.vkhanh234.SaliensAuto.searchmode.SearchMode;
-import com.gmail.vkhanh234.SaliensAuto.searchmode.HighestCapturedRate;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.*;
 import com.gmail.vkhanh234.SaliensAuto.utils.ProgressUtils;
 import com.gmail.vkhanh234.SaliensAuto.utils.RequestUtils;
 import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
@@ -47,17 +44,14 @@ public class Main {
 
     public static int[] totalDiff = new int[5];
 
-    public static CommandManager commandManager = new CommandManager();
-    public static long lastSuccess=System.currentTimeMillis();
-
     public static String focusPlanet;
     public static String focusZone;
 
-    public static List<SearchMode> modes = new ArrayList<>();
+    public static CommandManager commandManager = new CommandManager();
+    public static SearchModeManager searchModeManager = new SearchModeManager();
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
-        loadSearchModes();
         checkVersion();
 
         debug(highlight("SaliensAuto "+ VersionUtils.getLocalVersion(),Color.LIGHT_PURPLE));
@@ -218,7 +212,6 @@ public class Main {
     }
 
     private static boolean joinZone() {
-//        debug("Joining zone "+currentZone.zone_position+" (difficulty "+highlight(currentZone.difficulty+"")+")");
         debug("Joining Zone "+TextUtils.getZoneDetailsText(currentZone));
         String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
         Moshi moshi = new Moshi.Builder().build();
@@ -382,14 +375,8 @@ public class Main {
         versionThread.start();
     }
 
-    private static void loadSearchModes(){
-        modes.add(new HighestCapturedRate());
-        modes.add(new MostXpMode());
-        modes.add(new FocusMode());
-    }
-
     public static SearchMode getSearchModeInstance(int mode){
-        return modes.get(mode);
+        return searchModeManager.getSearchMode(mode);
     }
 
     public static void debug(String s){
