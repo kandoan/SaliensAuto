@@ -339,7 +339,7 @@ public class Main {
             return null;
         }
         else {
-            if(!isNoHighDiff()) noHighCounter++;
+            if(isNoHighDiff()) noHighCounter++;
             return zone;
         }
     }
