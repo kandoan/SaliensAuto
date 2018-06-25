@@ -490,7 +490,8 @@ public class Main {
             try {
                 compareVersion();
             } catch (Exception e){
-                e.printStackTrace();
+                if(!(e instanceof NullPointerException))
+                    e.printStackTrace();
             }
         }
     }
