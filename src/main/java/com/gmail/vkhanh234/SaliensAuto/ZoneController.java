@@ -19,6 +19,7 @@ public class ZoneController {
 
     public static String focusZone;
     public static Zone currentZone;
+    public static Zone nextZone;
 
     public static LinkedList<Double> cachedProgress = new LinkedList<>();
 
@@ -38,7 +39,7 @@ public class ZoneController {
         return false;
     }
 
-    public static void loadBestZone(){
+    public static Zone loadBestZone(String p){
 //        Zone zone = findBestZone(0.98);
 //        if(zone.zone_position==currentZone.zone_position){
 //            cachedProgress.add(zone.capture_progress);
@@ -55,23 +56,21 @@ public class ZoneController {
 //            cachedProgress.add(zone.capture_progress);
 //        }
 //        currentZone=zone;
-        Main.debug("Searching for zone");
         Zone zone;
         if(cachedProgress.size()>0){
             double average = getAverageProgress();
-            zone = findBestZone(0.99-average);
-//            Main.debug("\t Average progress: &e+"+ProgressUtils.round(average*100,2)+"&r. Find zone with max progress: &e"+ProgressUtils.round((0.9999-average)*100,2));
+            zone = findBestZone(p,0.98-average);
         }
-        else zone = findBestZone(Main.MAX_CAPTURE_RATE);
+        else zone = findBestZone(p,Main.MAX_CAPTURE_RATE);
         if(currentZone!=null && zone.zone_position==currentZone.zone_position){
             cacheProgress(zone.capture_progress-currentZone.capture_progress);
         }
         else cachedProgress.clear();
-        currentZone = zone;
+        return zone;
     }
 
-    public static Zone findBestZone(double maxProgress){
-        Planet planet = Main.getPlanetData(Main.currentPlanet);
+    public static Zone findBestZone(String p, double maxProgress){
+        Planet planet = Main.getPlanetData(p);
         if(planet==null) return null;
         Zone zone = findBestZone(planet,maxProgress);
         if(Main.planetSearchMode==1 && ((zone.difficulty>1 && zone.difficulty<Main.maxDiff) || Main.noHighCounter>=4)) {
@@ -119,7 +118,8 @@ public class ZoneController {
         return 0;
     }
 
-    private static double getAverageProgress() {
+    public static double getAverageProgress() {
+        if(cachedProgress.size()==0) return 0;
         double sum = 0;
         for(Double d:cachedProgress) sum+=d;
         return sum/cachedProgress.size();

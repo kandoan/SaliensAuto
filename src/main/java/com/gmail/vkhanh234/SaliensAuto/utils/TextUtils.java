@@ -31,7 +31,7 @@ public class TextUtils {
     }
 
     public static String getZoneDetailsText(Zone zone){
-        return "Position: &e"+(zone.zone_position+1)+" ("+getRowColumnText(zone.zone_position)+")"
+        return "Position: &e"+(zone.getZoneText())+" ("+getRowColumnText(zone.zone_position)+")"
                 +"&r - Difficulty: "+zone.getDifficultyText()
                 +"&r - Captured rate: &a"+ProgressUtils.round(zone.capture_progress*100,2)+"%"
                 ;

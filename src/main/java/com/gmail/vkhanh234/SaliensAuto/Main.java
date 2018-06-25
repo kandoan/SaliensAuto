@@ -9,6 +9,9 @@ import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.*;
 import com.gmail.vkhanh234.SaliensAuto.searchmode.*;
+import com.gmail.vkhanh234.SaliensAuto.thread.CheckVersionThread;
+import com.gmail.vkhanh234.SaliensAuto.thread.ProcessThread;
+import com.gmail.vkhanh234.SaliensAuto.thread.SearchThread;
 import com.gmail.vkhanh234.SaliensAuto.utils.ProgressUtils;
 import com.gmail.vkhanh234.SaliensAuto.utils.RequestUtils;
 import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
@@ -28,10 +31,12 @@ public class Main {
 
     public  static String token;
     public static String currentPlanet;
+    public static String nextPlanet;
     public static int planetSearchMode = 0;
 
     public static CheckVersionThread versionThread;
     public static ProcessThread thread;
+    public static SearchThread searchThread;
 
     public static boolean pause=true;
     public static boolean instantRestart=false;
@@ -113,7 +118,7 @@ public class Main {
         return color.getTag()+s+Color.RESET.getTag();
     }
 
-    private static void progress() {
+    public static void progress() {
         if(currentPlanet==null) {
             debug(highlight("No planet found",Color.RED));
             return;
@@ -121,29 +126,41 @@ public class Main {
         else {
             joinPlanet();
         }
+        Main.debug("Searching for zone");
+        ZoneController.currentZone = ZoneController.loadBestZone(currentPlanet);
+        nextPlanet=currentPlanet;
+        ZoneController.nextZone=ZoneController.currentZone;
         while(!pause) {
-            ZoneController.loadBestZone();
+            stopSearchThread();
+            if(!currentPlanet.equals(nextPlanet)){
+                leaveCurrentPlanet();
+                currentPlanet=nextPlanet;
+                joinPlanet();
+            }
+            ZoneController.currentZone = ZoneController.nextZone;
+            ZoneController.currentZone.capture_progress+=ZoneController.getAverageProgress();
             if (ZoneController.currentZone == null) {
                 debug(highlight("No zone found",Color.RED));
                 return;
             }
             if (!ZoneController.joinZone(ZoneController.currentZone)) {
-                debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.zone_position+""),Color.RED));
+                debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.getZoneText()+""),Color.RED));
                 return;
             }
             try {
-                debug("Wait 110s to complete the instance");
+                debug("&dWait 110s to complete the instance");
                 checkVersion();
+                searchWhileWaiting();
                 Thread.sleep(50000);
-                debug("Wait 60s");
+                debug("&dWait 60s");
                 Thread.sleep(30000);
-                debug("Wait 30s");
+                debug("&dWait 30s");
                 Thread.sleep(15000);
-                debug("Wait 15s");
+                debug("&dWait 15s");
                 Thread.sleep(5000);
-                debug("Wait 10s");
+                debug("&dWait 10s");
                 Thread.sleep(5000);
-                debug("Wait 5s");
+                debug("&dWait 5s");
                 Thread.sleep(5000);
                 if(!reportScore()){
                     debug(highlight("Failed to complete the instance. It could mean the zone is captured. Or you're opening Saliens somewhere else. Please close all things related to Saliens.",Color.RED));
@@ -241,7 +258,7 @@ public class Main {
     {
         debug(highlight("Searching for planet...",Color.AQUA));
         String res = getSearchModeInstance(planetSearchMode).search();
-        Main.debug("&e=> Choose planet &e"+res);
+        Main.debug("&a=> Choose planet &e"+res);
         return res;
     }
 
@@ -317,6 +334,18 @@ public class Main {
         return Color.RESET;
     }
 
+    public static void searchWhileWaiting(){
+        stopSearchThread();
+        searchThread = new SearchThread();
+        searchThread.run();
+    }
+
+    private static void stopSearchThread() {
+        if(searchThread!=null && !searchThread.isInterrupted()){
+            searchThread.interrupt();
+        }
+    }
+
     public static void checkVersion(){
         //Only check every 5 zones
         if(vcCounter<5){
@@ -340,7 +369,6 @@ public class Main {
     public static void debug(String s){
         String msg = "["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s+"&r";
         System.out.println(ColorParser.parse(msg));
-//        log(msg);
     }
 
 //    private static void log(String msg) {
@@ -368,41 +396,4 @@ public class Main {
 //        }
 //    }
 
-    private static class ProcessThread extends Thread {
-        @Override
-        public void run() {
-            while(!pause) {
-                try {
-                    leaveCurrentGame();
-                    leaveCurrentPlanet();
-                    progress();
-                }catch (Exception e){
-                    if(!(e instanceof NullPointerException))
-                        e.printStackTrace();
-                }
-                if(!instantRestart) {
-                    debug("Restarting in 8s...");
-                    try {
-                        Thread.sleep(8000);
-                    } catch (InterruptedException e) {
-                    }
-                } else {
-                    instantRestart = false;
-                    debug("Restarting...");
-                }
-            }
-            debug(highlight("Automation stopped",Color.RED));
-        }
-    }
-    private static class CheckVersionThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                compareVersion();
-            } catch (Exception e){
-                if(!(e instanceof NullPointerException))
-                    e.printStackTrace();
-            }
-        }
-    }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 public class SearchModeManager {
     public List<SearchMode> modes = new ArrayList<>();
     public SearchModeManager(){
-        modes.add(new HighestCapturedRate());
+        modes.add(new HighestCapturedMode());
         modes.add(new MostXpMode());
         modes.add(new FocusMode());
     }
