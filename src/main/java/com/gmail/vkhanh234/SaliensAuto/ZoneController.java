@@ -59,9 +59,9 @@ public class ZoneController {
         Zone zone;
         if(cachedProgress.size()>0){
             double average = getAverageProgress();
-            zone = findBestZone(p,0.98-average);
+            zone = findBestZone(p,0.98-average*2);
         }
-        else zone = findBestZone(p,Main.MAX_CAPTURE_RATE);
+        else zone = findBestZone(p,0.9);
         if(currentZone!=null && zone.zone_position==currentZone.zone_position){
             cacheProgress(zone.capture_progress-currentZone.capture_progress);
         }
