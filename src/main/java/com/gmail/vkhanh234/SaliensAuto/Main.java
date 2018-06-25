@@ -476,7 +476,10 @@ public class Main {
                         Thread.sleep(8000);
                     } catch (InterruptedException e) {
                     }
-                } else instantRestart =false;
+                } else {
+                    instantRestart = false;
+                    debug("Restarting...");
+                }
             }
             debug(highlight("Automation stopped",Color.RED));
         }
