@@ -31,9 +31,11 @@ public class Main {
 
     public static boolean pause=true;
     public static boolean instantRestart=false;
-    public static boolean noHighDiff=true;
+//    public static boolean noHighDiff=true;
     public static int vcCounter=5;
     public static int noHighCounter=0;
+
+    public static int[] totalDiff = new int[5];
 
     public static CommandManager commandManager = new CommandManager();
     public static long lastSuccess=System.currentTimeMillis();
@@ -298,7 +300,8 @@ public class Main {
     }
 
     public static String getMostXpPlanet(Planets planets){
-        noHighDiff=true;
+//        noHighDiff=true;
+        totalDiff = new int[5];
         int[] max = new int[5];
         String id = "1";
         for(Planet planet:planets.planets){
@@ -306,8 +309,9 @@ public class Main {
             int[] difficuties = planetData.getDifficulties();
             debug("> Planet "+TextUtils.getPlanetsDetailsText(planetData));
             debug("\tZones: "+TextUtils.getZonesText(planetData));
-            if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
+//            if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
             for(int i=4;i>=1;i--){
+                totalDiff[i]+=difficuties[i];
                 if(max[i]<difficuties[i]){
                     max=difficuties;
                     id=planet.id;
@@ -315,6 +319,10 @@ public class Main {
                 }
                 else if(max[i]>difficuties[i]) break;
             }
+        }
+        if(isOnlyEasyDiff()){
+            debug("&aThere are only "+addDiffColor("easy zones",1)+" left. Start searching for highest captured planets.");
+            return getTopPriorityPlanet(planets);
         }
         debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
         return id;
@@ -325,15 +333,23 @@ public class Main {
         Planet planet = getPlanetData(currentPlanet);
         if(planet==null) return null;
         Zone zone = planet.getAvailableZone();
-        if(planetSearchMode==1 && zone.difficulty<3 && (!noHighDiff || noHighCounter>=4)) {
+        if(planetSearchMode==1 && zone.difficulty<3 && (!isNoHighDiff() || noHighCounter>=4)) {
             noHighCounter=0;
             instantRestart =true;
             return null;
         }
         else {
-            if(noHighDiff) noHighCounter++;
+            if(!isNoHighDiff()) noHighCounter++;
             return zone;
         }
+    }
+
+    private static boolean isNoHighDiff() {
+        return totalDiff[3]<=0 && totalDiff[4]<=0;
+    }
+
+    private static boolean isOnlyEasyDiff() {
+        return isNoHighDiff() && totalDiff[2]<=0 && totalDiff[1]>0;
     }
 
     public static Planet getPlanetData(String id){
