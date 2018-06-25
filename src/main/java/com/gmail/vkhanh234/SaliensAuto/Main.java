@@ -19,18 +19,15 @@ import org.fusesource.jansi.*;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Scanner;
 
 
 public class Main {
-    public static final double MAX_CAPTURE_RATE = 0.93;
+    public static final double MAX_CAPTURE_RATE = 0.94;
 
     public  static String token;
     public static String currentPlanet;
-    public static Zone currentZone;
     public static int planetSearchMode = 0;
 
     public static CheckVersionThread versionThread;
@@ -41,14 +38,15 @@ public class Main {
 //    public static boolean noHighDiff=true;
     public static int vcCounter=5;
     public static int noHighCounter=0;
-
+    public static int maxDiff=0;
     public static int[] totalDiff = new int[5];
 
     public static String focusPlanet;
-    public static String focusZone;
 
     public static CommandManager commandManager = new CommandManager();
     public static SearchModeManager searchModeManager = new SearchModeManager();
+
+
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
@@ -85,6 +83,7 @@ public class Main {
 
     public static void stop() {
         if(thread!=null && !thread.isInterrupted()) {
+            ZoneController.clear();
             pause=true;
             thread.interrupt();
         }
@@ -100,7 +99,7 @@ public class Main {
                 debug("\t &cPlease set a focused planet with &efocusplanet &ccommand first");
                 return;
             }
-            debug("\t Focused on planet &e"+focusPlanet+" &r"+(focusZone!=null?("and zone &e"+(focusZone+1)):""));
+            debug("\t Focused on planet &e"+focusPlanet+" &r"+(ZoneController.focusZone!=null?("and zone &e"+(ZoneController.focusZone+1)):""));
         }
         thread = new ProcessThread();
         thread.start();
@@ -123,13 +122,13 @@ public class Main {
             joinPlanet();
         }
         while(!pause) {
-            currentZone = getAvailableZone();
-            if (currentZone == null) {
+            ZoneController.loadBestZone();
+            if (ZoneController.currentZone == null) {
                 debug(highlight("No zone found",Color.RED));
                 return;
             }
-            if (!joinZone()) {
-                debug(highlight("Failed joining zone " + highlight(currentZone.zone_position+""),Color.RED));
+            if (!ZoneController.joinZone(ZoneController.currentZone)) {
+                debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.zone_position+""),Color.RED));
                 return;
             }
             try {
@@ -159,9 +158,9 @@ public class Main {
     }
 
     private static boolean reportScore(){
-        int score = getZoneScore();
+        int score = ZoneController.getZoneScore();
         debug("Finishing an instance >> Score: &e"+score
-                +"&r - Zone "+TextUtils.getZoneDetailsText(currentZone));
+                +"&r - Zone "+TextUtils.getZoneDetailsText(ZoneController.currentZone));
         String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportScoreResponse> jsonAdapter = moshi.adapter(ReportScoreResponse.class);
@@ -172,27 +171,13 @@ public class Main {
                 if(response==null || response.new_score==null) return false;
                 debug("&bFinished. Your progress >> "+TextUtils.getPlayerProgress(response));
                 int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
-                debug("\t&bApprox time left to reach Level &e"+(response.new_level+1)+"&b: &d"+ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty)));
+                debug("\t&bApprox time left to reach Level &e"+(response.new_level+1)+"&b: &d"+ProgressUtils.getTimeLeft(scoreLeft,ZoneController.getPointPerSec(ZoneController.currentZone.difficulty)));
                 return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private static int getZoneScore() {
-        int score=getPointPerSec(currentZone.difficulty);
-        return score*120;
-    }
-
-    private static int getPointPerSec(int difficulty) {
-        switch (currentZone.difficulty){
-            case 1: return 5;
-            case 2: return 10;
-            case 3: return 20;
-        }
-        return 0;
     }
 
     public static void changeGroup(String clanid){
@@ -211,20 +196,6 @@ public class Main {
         else debug("&cError:&r You have already represented this group");
     }
 
-    private static boolean joinZone() {
-        debug("Joining Zone "+TextUtils.getZoneDetailsText(currentZone));
-        String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
-        Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
-        try {
-            ZoneInfoResponse response = jsonAdapter.fromJson(data);
-            if(response==null || response.response==null || response.response.zone_info==null || response.response.zone_info.captured) return false;
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
     private static void joinPlanet() {
         debug("Attempt to progress in planet " + highlight(currentPlanet));
@@ -275,23 +246,7 @@ public class Main {
     }
 
 
-    public static Zone getAvailableZone(){
-        debug("Searching for zone");
-        Planet planet = getPlanetData(currentPlanet);
-        if(planet==null) return null;
-        Zone zone = planet.getAvailableZone();
-        if(planetSearchMode==1 && zone.difficulty<3 && (!isNoHighDiff() || noHighCounter>=4)) {
-            noHighCounter=0;
-            instantRestart =true;
-            return null;
-        }
-        else {
-            if(isNoHighDiff()) noHighCounter++;
-            return zone;
-        }
-    }
-
-    private static boolean isNoHighDiff() {
+    public static boolean isNoHighDiff() {
         return totalDiff[3]<=0 && totalDiff[4]<=0;
     }
 
@@ -378,6 +333,9 @@ public class Main {
     public static SearchMode getSearchModeInstance(int mode){
         return searchModeManager.getSearchMode(mode);
     }
+    public static SearchMode getSearchMode(){
+        return getSearchModeInstance(planetSearchMode);
+    }
 
     public static void debug(String s){
         String msg = "["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s+"&r";
@@ -419,7 +377,8 @@ public class Main {
                     leaveCurrentPlanet();
                     progress();
                 }catch (Exception e){
-                    if(!(e instanceof NullPointerException)) e.printStackTrace();
+                    if(!(e instanceof NullPointerException))
+                        e.printStackTrace();
                 }
                 if(!instantRestart) {
                     debug("Restarting in 8s...");

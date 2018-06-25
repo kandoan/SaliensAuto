@@ -1,6 +1,7 @@
 package com.gmail.vkhanh234.SaliensAuto.commands;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
+import com.gmail.vkhanh234.SaliensAuto.ZoneController;
 import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
 
 public class FocusZoneCommand extends CommandAbstract {
@@ -16,7 +17,7 @@ public class FocusZoneCommand extends CommandAbstract {
     @Override
     public boolean onCommand(String[] args) {
         if(args.length==0) return false;
-        Main.focusZone = TextUtils.getZonePosition(args[0]);
+        ZoneController.focusZone = TextUtils.getZonePosition(args[0]);
         Main.debug("Now focus on Zone &e"+args[0]+"&r. Will automatically search for hardest zone if this zone is captured.");
         return true;
     }
