@@ -30,8 +30,8 @@ public class Main {
     public static ProcessThread thread;
 
     public static boolean pause=true;
+    public static boolean softRestart=false;
     public static boolean noHighDiff=true;
-
     public static int vcCounter=5;
     public static int noHighCounter=0;
 
@@ -327,6 +327,7 @@ public class Main {
         Zone zone = planet.getAvailableZone();
         if(planetSearchMode==1 && zone.difficulty<3 && (!noHighDiff || noHighCounter>=4)) {
             noHighCounter=0;
+            softRestart=true;
             return null;
         }
         else {
@@ -453,11 +454,13 @@ public class Main {
                 }catch (Exception e){
                     if(!(e instanceof NullPointerException)) e.printStackTrace();
                 }
-                debug("Restarting in 8s...");
-                try {
-                    Thread.sleep(8000);
-                } catch (InterruptedException e) {
-                }
+                if(!softRestart) {
+                    debug("Restarting in 8s...");
+                    try {
+                        Thread.sleep(8000);
+                    } catch (InterruptedException e) {
+                    }
+                } else softRestart=false;
             }
             debug(highlight("Automation stopped",Color.RED));
         }
