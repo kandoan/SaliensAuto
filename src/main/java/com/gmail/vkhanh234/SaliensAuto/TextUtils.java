@@ -1,11 +1,14 @@
 package com.gmail.vkhanh234.SaliensAuto;
 
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
-import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.TopClan;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Zone;
+import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
 
-public class PlanetsUtils {
+import java.text.NumberFormat;
+import java.util.Locale;
+
+public class TextUtils {
     public static String getZonesText(Planet p) {
         Planet planetData;
         if(p.zones==null || p.zones.size()==0) planetData = Main.getPlanetData(p.id);
@@ -40,11 +43,12 @@ public class PlanetsUtils {
     }
 
     public static String getPlanetsDetailsText(Planet planet) {
+        NumberFormat format = NumberFormat.getInstance(Locale.US);
         return "ID: &e"+planet.id
                 +"&r - Name: &e"+planet.extractName()
                 +"&r - Captured rate: &a"+ProgressUtils.round(planet.state.capture_progress*100,2)+"%"
-                +"&r - Current players: &b"+planet.state.current_players
-                +"&r - Total players: &b"+planet.state.total_joins
+                +"&r - Current players: &b"+format.format(planet.state.current_players)
+                +"&r - Total players: &b"+format.format(planet.state.total_joins)
                 +"&r - Priority: &d"+planet.state.priority;
     }
 
@@ -56,5 +60,13 @@ public class PlanetsUtils {
             return String.valueOf(row*12+col);
         }
         return String.valueOf(Integer.valueOf(s)-1);
+    }
+
+    public static String getPlayerProgress(ReportScore response) {
+        NumberFormat format = NumberFormat.getInstance(Locale.US);
+        return "Level: &e"+response.new_level
+                +"&b - XP: &r(&e"+format.format(response.new_score)+"&r/&e"+format.format(response.next_level_score)+"&r)"
+                +"&b - XP Percent: &a"+ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"%"
+                +"&b - XP Required: &e"+format.format(Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score));
     }
 }

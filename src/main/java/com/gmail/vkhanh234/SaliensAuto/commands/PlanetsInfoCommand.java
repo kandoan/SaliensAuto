@@ -1,13 +1,9 @@
 package com.gmail.vkhanh234.SaliensAuto.commands;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
-import com.gmail.vkhanh234.SaliensAuto.PlanetsUtils;
-import com.gmail.vkhanh234.SaliensAuto.ProgressUtils;
-import com.gmail.vkhanh234.SaliensAuto.colors.Color;
+import com.gmail.vkhanh234.SaliensAuto.TextUtils;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
-import com.gmail.vkhanh234.SaliensAuto.data.Planet.TopClan;
-import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.ClanInfo;
 
 public class PlanetsInfoCommand extends CommandAbstract {
 
@@ -27,8 +23,8 @@ public class PlanetsInfoCommand extends CommandAbstract {
     }
 
     private void showInfo(Planet planet) {
-        Main.debug("> Planet "+PlanetsUtils.getPlanetsDetailsText(planet));
-        Main.debug("\t Zones: "+PlanetsUtils.getZonesText(planet));
-        Main.debug("\t Top Clans: "+PlanetsUtils.getTopClanText(planet));
+        Main.debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
+        Main.debug("\t Zones: "+TextUtils.getZonesText(planet));
+        Main.debug("\t Top Clans: "+TextUtils.getTopClanText(planet));
     }
 }

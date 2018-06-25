@@ -151,7 +151,7 @@ public class Main {
     private static boolean reportScore(){
         int score = getZoneScore();
         debug("Finishing an instance >> Score: &e"+score
-                +"&r - Zone "+PlanetsUtils.getZoneDetailsText(currentZone));
+                +"&r - Zone "+TextUtils.getZoneDetailsText(currentZone));
         String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportScoreResponse> jsonAdapter = moshi.adapter(ReportScoreResponse.class);
@@ -160,10 +160,7 @@ public class Main {
             if(res!=null && res.response!=null){
                 ReportScore response = res.response;
                 if(response==null || response.new_score==null) return false;
-                debug("&bFinished. Your progress >> Level: &e"+response.new_level
-                        +"&b - XP: &r(&e"+response.new_score+"&r/&e"+response.next_level_score+"&r)"
-                        +"&b - XP Percent: &a"+ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"%"
-                        +"&b - XP Required: &e"+(Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score)));
+                debug("&bFinished. Your progress >> "+TextUtils.getPlayerProgress(response));
                 int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
                 debug("\t&bApprox time left to reach Level &e"+(response.new_level+1)+"&b: &d"+ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty)));
                 return true;
@@ -206,7 +203,7 @@ public class Main {
 
     private static boolean joinZone() {
 //        debug("Joining zone "+currentZone.zone_position+" (difficulty "+highlight(currentZone.difficulty+"")+")");
-        debug("Joining Zone "+PlanetsUtils.getZoneDetailsText(currentZone));
+        debug("Joining Zone "+TextUtils.getZoneDetailsText(currentZone));
         String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
@@ -281,7 +278,7 @@ public class Main {
             planetSearchMode=1;
             return getAvailablePlanet();
         }
-        debug("=> Choose focused Planet "+PlanetsUtils.getPlanetsDetailsText(data));
+        debug("=> Choose focused Planet "+TextUtils.getPlanetsDetailsText(data));
         return focusPlanet;
     }
 
@@ -290,7 +287,7 @@ public class Main {
         String id="1";
         for(Planet planet:planets.planets){
             if(planet.state==null || !planet.state.active || planet.state.captured) continue;
-            debug("> Planet "+PlanetsUtils.getPlanetsDetailsText(planet));
+            debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
             if(min>planet.state.priority){
                 min = planet.state.priority;
                 id=planet.id;
@@ -307,8 +304,8 @@ public class Main {
         for(Planet planet:planets.planets){
             Planet planetData = getPlanetData(planet.id);
             int[] difficuties = planetData.getDifficulties();
-            debug("> Planet "+PlanetsUtils.getPlanetsDetailsText(planetData));
-            debug("\tZones: "+PlanetsUtils.getZonesText(planetData));
+            debug("> Planet "+TextUtils.getPlanetsDetailsText(planetData));
+            debug("\tZones: "+TextUtils.getZonesText(planetData));
             if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
             for(int i=4;i>=1;i--){
                 if(max[i]<difficuties[i]){
