@@ -265,7 +265,7 @@ public class Main {
         if(planetSearchMode==2) return checkFocusPlanet();
         Planets planets = getPlanets();
         if(planets==null) return null;
-        if(planetSearchMode==0) return getTopPriorityPlanet(planets);
+        if(planetSearchMode==0) return getHighestCapturedPlanet(planets);
         if(planetSearchMode==1) return getMostXpPlanet(planets);
         debug("&cError: &rSearch mode is not correct. Please set it again and re-start.");
         stop();
@@ -284,14 +284,14 @@ public class Main {
         return focusPlanet;
     }
 
-    public static String getTopPriorityPlanet(Planets planets){
-        int min = Integer.MAX_VALUE;
+    public static String getHighestCapturedPlanet(Planets planets){
+        double max = 0;
         String id="1";
         for(Planet planet:planets.planets){
             if(planet.state==null || !planet.state.active || planet.state.captured) continue;
             debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
-            if(min>planet.state.priority){
-                min = planet.state.priority;
+            if(max<planet.state.capture_progress){
+                max = planet.state.capture_progress;
                 id=planet.id;
             }
         }
@@ -322,7 +322,7 @@ public class Main {
         }
         if(isOnlyEasyDiff()){
             debug("&aThere are only "+addDiffColor("easy zones",1)+" left. Start searching for highest captured planets.");
-            return getTopPriorityPlanet(planets);
+            return getHighestCapturedPlanet(planets);
         }
         debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
         return id;
