@@ -7,12 +7,13 @@ If you need helps, just post on [this Reddit thread](https://www.reddit.com/r/Sa
 
 If you want to automate 24/24 without keeping your PC on 24/24, read far below in the *Heroku* section. Quite complicated though.
 # Features
-* No web browser needed. Since this is a **Java** program, **not JavaSCRIPT**. It'll run as a standalone program which cost less resource than javascript's version. Because no browser means no images, assests, sounds... need to be loaded.
-* Easier to install. I think? At least I'm sure it's easier than the PHP's one. You just have to install Java which is pretty common nowaday so some of you may have already installed it anyway (especially those minecraft players). With java installed, you can easily open this program by just opening a file I included in the download.
-* Pretty much has the same features as other's automation. **Auto join zone/planet, auto repeat, auto kill, invincibility, always max points,...**
-* 2 mode to search for zone/planet. 
-* - First mode is to search for planet with the most captured rate so you can hop in and spend as much time in those planets to have more chance winning the games before the plannet closed
-* - Second mode is to aggressive search for planet with the most XP return (most higher difficulty zone). With this, you'll level up quicker since it'll always automatically join a planet/zone with highest difficulty possible (hard difficulty).
+* No web browser needed. Means less resources used and your PC will run faster.
+* Easy to install. Since Java is so common nowaday. Some of you might have installed Java already (especially those minecraft players).
+* Pretty much has the same features as other's automation. **Auto join zone/planet, auto repeat, auto kill, invincibility, always max points, focus specific planet/zone...**
+* 3 mode to search for zone/planet. 
+  - A mode to search for planet with the closest completion (most captured rate) to let you finish of planets to let new planets appear.
+  - Another mode to aggressive search for planet with the most XP return (most higher difficulty zones). Use this mode to get the most XP.
+  - And another mode to focus on specific planet/zone. Pretty much explained itselft. Use this when you want to play in specific planet or zone. 
 
 # Download
 Go here: https://github.com/KickVN/SaliensAuto/releases
@@ -62,17 +63,26 @@ I've never tried linux or mac before. So, I'm sorry but I can't help you here.
 # Commands
 After you openned up the program, you will see a list of commands:
 ```
+ Commands List:
        settoken <token> - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get it.
-       setsearchmode <1/0> - Set the search mode. Set to 0 (default) to search for highest captured rate planet. 
-                             Set to 1 to search for planet with most XP reward.
+       setsearchmode <0/1/2> - Set the search mode.
+                  Set to 0 (default) to search for highest captured rate planet.
+                  Set to 1 to search for planet with most XP reward.
+                  Set to 2 to only choose focused planet.
+       focusplanet <planet_ID> - Choose planet to focus when search mode is 2. Use planetsinfo command to get planets' ID.
        planetsinfo - Show brief info of all active planets
+       focuszone <zone_position> - (Optional) Choose a zone to focused on when search mode is 2.
+                   position can be a number start from 1. For example: 60 means 60th zone when counting left to right, top to bottom
+                   or can be <row>,<column>. For example: 3,5 means zone in row 3 and column 5.
        changegroup <groupid> - Change the group you represent. ID 33035916 is /r/saliens group.
        start - Start the automating process
        stop - Stop the automating process
        exit - Exit the program
 ```
 Easy to understand right? 
-First you set your token with *settoken*. Then you change the search mode with *setsearchmode* if necessary. And then *start*.
+
+First you set your token with *settoken*. Then you change the search mode with *setsearchmode* and some more followed commands if necessary. And then *start*.
+
 If you don't know how to get the token, far below I will write a guide.
 
 # What is \[args]
