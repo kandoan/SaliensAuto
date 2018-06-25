@@ -1,7 +1,7 @@
 package com.gmail.vkhanh234.SaliensAuto.commands;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
-import com.gmail.vkhanh234.SaliensAuto.TextUtils;
+import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
 

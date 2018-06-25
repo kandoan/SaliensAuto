@@ -1,4 +1,4 @@
-package com.gmail.vkhanh234.SaliensAuto;
+package com.gmail.vkhanh234.SaliensAuto.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -8,13 +8,23 @@ import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.*;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.FocusMode;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.MostXpMode;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.SearchMode;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.HighestCapturedRate;
+import com.gmail.vkhanh234.SaliensAuto.utils.ProgressUtils;
+import com.gmail.vkhanh234.SaliensAuto.utils.RequestUtils;
+import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
+import com.gmail.vkhanh234.SaliensAuto.utils.VersionUtils;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import org.fusesource.jansi.*;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 
@@ -42,9 +52,12 @@ public class Main {
 
     public static String focusPlanet;
     public static String focusZone;
+
+    public static List<SearchMode> modes = new ArrayList<>();
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
+        loadSearchModes();
         checkVersion();
 
         debug(highlight("SaliensAuto "+ VersionUtils.getLocalVersion(),Color.LIGHT_PURPLE));
@@ -54,6 +67,7 @@ public class Main {
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
         if(args.length>=3) start();
+
 
         Scanner scanner = new Scanner(System.in);
         while(true){
@@ -262,71 +276,11 @@ public class Main {
     public static String getAvailablePlanet()
     {
         debug(highlight("Searching for planet...",Color.AQUA));
-        if(planetSearchMode==2) return checkFocusPlanet();
-        Planets planets = getPlanets();
-        if(planets==null) return null;
-        if(planetSearchMode==0) return getTopPriorityPlanet(planets);
-        if(planetSearchMode==1) return getMostXpPlanet(planets);
-        debug("&cError: &rSearch mode is not correct. Please set it again and re-start.");
-        stop();
-        return null;
+        String res = getSearchModeInstance(planetSearchMode).search();
+        Main.debug("&e=> Choose planet &e"+res);
+        return res;
     }
 
-    private static String checkFocusPlanet() {
-        Planet data = getPlanetData(focusPlanet);
-        if(!data.state.active || data.state.captured || data.state.capture_progress>MAX_CAPTURE_RATE){
-            debug("&bFocused Planet &e"+focusPlanet+" &bhas been captured");
-            debug("&bAtuomatically switched to search mode &e1 &binstead");
-            planetSearchMode=1;
-            return getAvailablePlanet();
-        }
-        debug("=> Choose focused Planet "+TextUtils.getPlanetsDetailsText(data));
-        return focusPlanet;
-    }
-
-    public static String getTopPriorityPlanet(Planets planets){
-        int min = Integer.MAX_VALUE;
-        String id="1";
-        for(Planet planet:planets.planets){
-            if(planet.state==null || !planet.state.active || planet.state.captured) continue;
-            debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
-            if(min>planet.state.priority){
-                min = planet.state.priority;
-                id=planet.id;
-            }
-        }
-        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
-        return id;
-    }
-
-    public static String getMostXpPlanet(Planets planets){
-//        noHighDiff=true;
-        totalDiff = new int[5];
-        int[] max = new int[5];
-        String id = "1";
-        for(Planet planet:planets.planets){
-            Planet planetData = getPlanetData(planet.id);
-            int[] difficuties = planetData.getDifficulties();
-            debug("> Planet "+TextUtils.getPlanetsDetailsText(planetData));
-            debug("\tZones: "+TextUtils.getZonesText(planetData));
-//            if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
-            for(int i=4;i>=1;i--){
-                totalDiff[i]+=difficuties[i];
-                if(max[i]<difficuties[i]){
-                    max=difficuties;
-                    id=planet.id;
-                    break;
-                }
-                else if(max[i]>difficuties[i]) break;
-            }
-        }
-        if(isOnlyEasyDiff()){
-            debug("&aThere are only "+addDiffColor("easy zones",1)+" left. Start searching for highest captured planets.");
-            return getTopPriorityPlanet(planets);
-        }
-        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
-        return id;
-    }
 
     public static Zone getAvailableZone(){
         debug("Searching for zone");
@@ -348,7 +302,7 @@ public class Main {
         return totalDiff[3]<=0 && totalDiff[4]<=0;
     }
 
-    private static boolean isOnlyEasyDiff() {
+    public static boolean isOnlyEasyDiff() {
         return isNoHighDiff() && totalDiff[2]<=0 && totalDiff[1]>0;
     }
 
@@ -426,6 +380,16 @@ public class Main {
         if(versionThread!=null && !versionThread.isInterrupted()) versionThread.interrupt();
         versionThread = new CheckVersionThread();
         versionThread.start();
+    }
+
+    private static void loadSearchModes(){
+        modes.add(new HighestCapturedRate());
+        modes.add(new MostXpMode());
+        modes.add(new FocusMode());
+    }
+
+    public static SearchMode getSearchModeInstance(int mode){
+        return modes.get(mode);
     }
 
     public static void debug(String s){

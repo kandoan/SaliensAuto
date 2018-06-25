@@ -1,4 +1,6 @@
-package com.gmail.vkhanh234.SaliensAuto;
+package com.gmail.vkhanh234.SaliensAuto.utils;
+
+import com.gmail.vkhanh234.SaliensAuto.Main;
 
 import javax.net.ssl.*;
 import java.io.BufferedReader;

@@ -1,5 +1,6 @@
-package com.gmail.vkhanh234.SaliensAuto;
+package com.gmail.vkhanh234.SaliensAuto.utils;
 
+import com.gmail.vkhanh234.SaliensAuto.Main;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.TopClan;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Zone;
