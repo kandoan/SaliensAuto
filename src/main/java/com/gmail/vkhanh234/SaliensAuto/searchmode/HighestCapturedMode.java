@@ -6,7 +6,6 @@ import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
 import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
 
 public class HighestCapturedMode extends SearchMode {
-    public static int counter=0;
     protected String search(Planets planets){
         String result = null;
         double max = 0;

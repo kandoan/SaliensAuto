@@ -9,23 +9,27 @@ public class SearchThread extends Thread {
         @Override
         public void run() {
             try {
-                if (Main.planetSearchMode == 0) {
-                    if (HighestCapturedMode.counter >= 4) {
-                        HighestCapturedMode.counter = 0;
+                if (Main.planetSearchMode == 0 || Main.planetSearchMode==1) {
+                    if (Main.searchCounter >= 4) {
+                        Main.searchCounter = 0;
                         Main.debug("&bChecking planets' progress while waiting");
                         Main.nextPlanet = Main.getSearchMode().search();
-                    } else HighestCapturedMode.counter++;
+                    } else Main.searchCounter++;
                 }
                 Main.debug("Searching for next zone while waiting");
                 ZoneController.nextZone = ZoneController.loadBestZone(Main.currentPlanet);
-                if (ZoneController.nextZone == null) {
+                boolean isNullZone = ZoneController.nextZone == null;
+                if (isNullZone) {
                     Main.debug("&cError: &rNo zone found. Searching for planet instead...");
                     Main.nextPlanet = Main.getSearchMode().search();
                     ZoneController.clear();
                     ZoneController.nextZone = ZoneController.loadBestZone(Main.nextPlanet);
-                    if (Main.planetSearchMode == 0) HighestCapturedMode.counter = 0;
+                    if (Main.planetSearchMode == 0 || Main.planetSearchMode==1) Main.searchCounter = 0;
                 }
-                if(Main.nextPlanet!=null && !Main.nextPlanet.equals(Main.currentPlanet)) Main.debug("Next planet is Planet &e"+Main.nextPlanet);
+                if(Main.nextPlanet!=null && !Main.nextPlanet.equals(Main.currentPlanet)) {
+                    if(!isNullZone) ZoneController.clear();
+                    Main.debug("Next planet is Planet &e" + Main.nextPlanet);
+                }
                 if(ZoneController.nextZone!=null) {
                     Main.debug("Next zone is Zone " + TextUtils.getZoneDetailsText(ZoneController.nextZone));
                     if(Main.currentPlanet.equals(Main.nextPlanet) && ZoneController.nextZone.zone_position==ZoneController.currentZone.zone_position){

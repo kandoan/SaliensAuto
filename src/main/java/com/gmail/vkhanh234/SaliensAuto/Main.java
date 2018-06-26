@@ -27,7 +27,7 @@ import java.util.Scanner;
 
 
 public class Main {
-    public static final double MAX_CAPTURE_RATE = 0.94;
+    public static final double MAX_CAPTURE_RATE = 0.95;
 
     public  static String token;
     public static String currentPlanet;
@@ -45,6 +45,8 @@ public class Main {
     public static int noHighCounter=0;
     public static int maxDiff=0;
     public static int[] totalDiff = new int[5];
+
+    public static int searchCounter=0;
 
     public static String focusPlanet;
 

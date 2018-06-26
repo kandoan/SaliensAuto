@@ -40,22 +40,6 @@ public class ZoneController {
     }
 
     public static Zone loadBestZone(String p){
-//        Zone zone = findBestZone(0.98);
-//        if(zone.zone_position==currentZone.zone_position){
-//            cachedProgress.add(zone.capture_progress);
-//            if(cachedProgress.size()>2){
-//                double average = getAverageProgress();
-//                double lastProgress = getLastProgress();
-//                if(average+lastProgress>0.98){
-//                    zone = findBestZone(lastProgress);
-//                }
-//            }
-//        }
-//        else{
-//            cachedProgress.clear();
-//            cachedProgress.add(zone.capture_progress);
-//        }
-//        currentZone=zone;
         Zone zone;
         if(cachedProgress.size()>0){
             double predict = getMaxProgress();
@@ -73,15 +57,16 @@ public class ZoneController {
         Planet planet = Main.getPlanetData(p);
         if(planet==null) return null;
         Zone zone = findBestZone(planet,maxProgress);
-        if(Main.planetSearchMode==1 && ((zone.difficulty>1 && zone.difficulty<Main.maxDiff) || Main.noHighCounter>=4)) {
-            Main.noHighCounter=0;
-            Main.instantRestart=true;
-            return null;
-        }
-        else {
-            if(Main.planetSearchMode==1 && (zone.difficulty<Main.maxDiff || zone.difficulty==1)) Main.noHighCounter++;
-            return zone;
-        }
+//        if(Main.planetSearchMode==1 && ((zone.difficulty>1 && zone.difficulty<Main.maxDiff) || Main.noHighCounter>=4)) {
+//            Main.noHighCounter=0;
+//            Main.instantRestart=true;
+//            return null;
+//        }
+//        else {
+//            if(Main.planetSearchMode==1 && (zone.difficulty<Main.maxDiff || zone.difficulty==1)) Main.noHighCounter++;
+//            return zone;
+//        }
+        return zone;
     }
 
     private static Zone findBestZone(Planet planet, double maxProgress) {
