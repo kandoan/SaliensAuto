@@ -165,7 +165,7 @@ public class Main {
                 if(!reportScore()){
                     debug(highlight("Failed to complete the instance. It could mean the zone is captured. Or you're opening Saliens somewhere else. Please close all things related to Saliens.",Color.RED));
                 }
-                leaveCurrentGame();
+//                leaveCurrentGame();
                 debug(highlight("===================================",Color.GREEN));
             } catch (InterruptedException e) {
                 if(!pause) e.printStackTrace();

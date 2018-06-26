@@ -58,8 +58,8 @@ public class ZoneController {
 //        currentZone=zone;
         Zone zone;
         if(cachedProgress.size()>0){
-            double average = getAverageProgress();
-            zone = findBestZone(p,0.98-average*2);
+            double predict = getMaxProgress();
+            zone = findBestZone(p,0.985-predict*2);
         }
         else zone = findBestZone(p,0.9);
         if(currentZone!=null && zone.zone_position==currentZone.zone_position){
@@ -116,6 +116,14 @@ public class ZoneController {
             case 3: return 20;
         }
         return 0;
+    }
+
+    public static double getMaxProgress(){
+        double max=0;
+        for(Double d:cachedProgress){
+            if(max<d) max=d;
+        }
+        return max;
     }
 
     public static double getAverageProgress() {

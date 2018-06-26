@@ -21,18 +21,20 @@ public class SearchThread extends Thread {
                 if (ZoneController.nextZone == null) {
                     Main.debug("&cError: &rNo zone found. Searching for planet instead...");
                     Main.nextPlanet = Main.getSearchMode().search();
+                    ZoneController.clear();
                     ZoneController.nextZone = ZoneController.loadBestZone(Main.nextPlanet);
                     if (Main.planetSearchMode == 0) HighestCapturedMode.counter = 0;
                 }
                 if(Main.nextPlanet!=null && !Main.nextPlanet.equals(Main.currentPlanet)) Main.debug("Next planet is Planet &e"+Main.nextPlanet);
                 if(ZoneController.nextZone!=null) {
                     Main.debug("Next zone is Zone " + TextUtils.getZoneDetailsText(ZoneController.nextZone));
-                    if(ZoneController.nextZone.zone_position==ZoneController.currentZone.zone_position){
+                    if(Main.currentPlanet.equals(Main.nextPlanet) && ZoneController.nextZone.zone_position==ZoneController.currentZone.zone_position){
                         ZoneController.currentZone=ZoneController.nextZone;
                     }
                 }
             } catch (Exception e){
-                e.printStackTrace();
+                if(!(e instanceof NullPointerException))
+                    e.printStackTrace();
             }
         }
     }
