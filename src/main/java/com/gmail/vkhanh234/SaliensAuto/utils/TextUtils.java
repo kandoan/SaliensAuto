@@ -1,5 +1,6 @@
-package com.gmail.vkhanh234.SaliensAuto;
+package com.gmail.vkhanh234.SaliensAuto.utils;
 
+import com.gmail.vkhanh234.SaliensAuto.Main;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.TopClan;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Zone;
@@ -30,9 +31,9 @@ public class TextUtils {
     }
 
     public static String getZoneDetailsText(Zone zone){
-        return "Position: &e"+(zone.zone_position+1)+" ("+getRowColumnText(zone.zone_position)+")"
+        return "Position: &e"+(zone.getZoneText())+" ("+getRowColumnText(zone.zone_position)+")"
                 +"&r - Difficulty: "+zone.getDifficultyText()
-                +"&r - Captured rate: &a"+ProgressUtils.round(zone.capture_progress*100,2)+"%"
+                +"&r - Captured rate: &a"+ProgressUtils.round(zone.capture_progress*100,2)+"%"+"&r"
                 ;
     }
 
@@ -49,7 +50,8 @@ public class TextUtils {
                 +"&r - Captured rate: &a"+ProgressUtils.round(planet.state.capture_progress*100,2)+"%"
                 +"&r - Current players: &b"+format.format(planet.state.current_players)
                 +"&r - Total players: &b"+format.format(planet.state.total_joins)
-                +"&r - Priority: &d"+planet.state.priority;
+                +"&r - Priority: &d"+planet.state.priority
+                +"&r";
     }
 
     public static String getZonePosition(String s) {
@@ -67,6 +69,7 @@ public class TextUtils {
         return "Level: &e"+response.new_level
                 +"&b - XP: &r(&e"+format.format(Integer.valueOf(response.new_score))+"&r/&e"+format.format(Integer.valueOf(response.next_level_score))+"&r)"
                 +"&b - XP Percent: &a"+ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"%"
-                +"&b - XP Required: &e"+format.format(Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score));
+                +"&b - XP Required: &e"+format.format(Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score))
+                +"&r";
     }
 }

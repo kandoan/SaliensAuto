@@ -8,6 +8,14 @@ import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.*;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.*;
+import com.gmail.vkhanh234.SaliensAuto.thread.CheckVersionThread;
+import com.gmail.vkhanh234.SaliensAuto.thread.ProcessThread;
+import com.gmail.vkhanh234.SaliensAuto.thread.SearchThread;
+import com.gmail.vkhanh234.SaliensAuto.utils.ProgressUtils;
+import com.gmail.vkhanh234.SaliensAuto.utils.RequestUtils;
+import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
+import com.gmail.vkhanh234.SaliensAuto.utils.VersionUtils;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import org.fusesource.jansi.*;
@@ -19,29 +27,35 @@ import java.util.Scanner;
 
 
 public class Main {
-    public static final double MAX_CAPTURE_RATE = 0.93;
+    public static final double MAX_CAPTURE_RATE = 0.95;
 
     public  static String token;
     public static String currentPlanet;
-    public static Zone currentZone;
+    public static String nextPlanet;
     public static int planetSearchMode = 0;
 
     public static CheckVersionThread versionThread;
     public static ProcessThread thread;
+    public static SearchThread searchThread;
 
     public static boolean pause=true;
     public static boolean instantRestart=false;
 //    public static boolean noHighDiff=true;
     public static int vcCounter=5;
     public static int noHighCounter=0;
-
+    public static int maxDiff=0;
     public static int[] totalDiff = new int[5];
 
-    public static CommandManager commandManager = new CommandManager();
-    public static long lastSuccess=System.currentTimeMillis();
+    public static int searchCounter=0;
 
     public static String focusPlanet;
-    public static String focusZone;
+
+    public static CommandManager commandManager = new CommandManager();
+    public static SearchModeManager searchModeManager = new SearchModeManager();
+
+    public static boolean disableUpdate = true;
+
+
     public static void main(String[] args){
         AnsiConsole.systemInstall();
 
@@ -54,6 +68,7 @@ public class Main {
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
         if(args.length>=3) start();
+
 
         Scanner scanner = new Scanner(System.in);
         while(true){
@@ -92,7 +107,7 @@ public class Main {
                 debug("\t &cPlease set a focused planet with &efocusplanet &ccommand first");
                 return;
             }
-            debug("\t Focused on planet &e"+focusPlanet+" &r"+(focusZone!=null?("and zone &e"+(focusZone+1)):""));
+            debug("\t Focused on planet &e"+focusPlanet+" &r"+(ZoneController.focusZone!=null?("and zone &e"+(Integer.valueOf(ZoneController.focusZone)+1)):""));
         }
         thread = new ProcessThread();
         thread.start();
@@ -106,7 +121,8 @@ public class Main {
         return color.getTag()+s+Color.RESET.getTag();
     }
 
-    private static void progress() {
+    public static void progress() {
+        ZoneController.clear();
         if(currentPlanet==null) {
             debug(highlight("No planet found",Color.RED));
             return;
@@ -114,34 +130,46 @@ public class Main {
         else {
             joinPlanet();
         }
+        Main.debug("Searching for zone");
+        ZoneController.currentZone = ZoneController.loadBestZone(currentPlanet);
+        nextPlanet=currentPlanet;
+        ZoneController.nextZone=ZoneController.currentZone;
         while(!pause) {
-            currentZone = getAvailableZone();
-            if (currentZone == null) {
+            stopSearchThread();
+            if(!currentPlanet.equals(nextPlanet)){
+                leaveCurrentPlanet();
+                currentPlanet=nextPlanet;
+                joinPlanet();
+            }
+            ZoneController.currentZone = ZoneController.nextZone;
+            ZoneController.currentZone.capture_progress+=ZoneController.getAverageProgress();
+            if (ZoneController.currentZone == null) {
                 debug(highlight("No zone found",Color.RED));
                 return;
             }
-            if (!joinZone()) {
-                debug(highlight("Failed joining zone " + highlight(currentZone.zone_position+""),Color.RED));
+            if (!ZoneController.joinZone(ZoneController.currentZone)) {
+                debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.getZoneText()+""),Color.RED));
                 return;
             }
             try {
-                debug("Wait 110s to complete the instance");
+                debug("&dWait 110s to complete the instance");
                 checkVersion();
+                searchWhileWaiting();
                 Thread.sleep(50000);
-                debug("Wait 60s");
+                debug("&dWait 60s");
                 Thread.sleep(30000);
-                debug("Wait 30s");
+                debug("&dWait 30s");
                 Thread.sleep(15000);
-                debug("Wait 15s");
+                debug("&dWait 15s");
                 Thread.sleep(5000);
-                debug("Wait 10s");
+                debug("&dWait 10s");
                 Thread.sleep(5000);
-                debug("Wait 5s");
+                debug("&dWait 5s");
                 Thread.sleep(5000);
                 if(!reportScore()){
                     debug(highlight("Failed to complete the instance. It could mean the zone is captured. Or you're opening Saliens somewhere else. Please close all things related to Saliens.",Color.RED));
                 }
-                leaveCurrentGame();
+//                leaveCurrentGame();
                 debug(highlight("===================================",Color.GREEN));
             } catch (InterruptedException e) {
                 if(!pause) e.printStackTrace();
@@ -151,9 +179,9 @@ public class Main {
     }
 
     private static boolean reportScore(){
-        int score = getZoneScore();
+        int score = ZoneController.getZoneScore();
         debug("Finishing an instance >> Score: &e"+score
-                +"&r - Zone "+TextUtils.getZoneDetailsText(currentZone));
+                +"&r - Zone "+TextUtils.getZoneDetailsText(ZoneController.currentZone));
         String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportScoreResponse> jsonAdapter = moshi.adapter(ReportScoreResponse.class);
@@ -164,27 +192,13 @@ public class Main {
                 if(response==null || response.new_score==null) return false;
                 debug("&bFinished. Your progress >> "+TextUtils.getPlayerProgress(response));
                 int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
-                debug("\t&bApprox time left to reach Level &e"+(response.new_level+1)+"&b: &d"+ProgressUtils.getTimeLeft(scoreLeft,getPointPerSec(currentZone.difficulty)));
+                debug("\t&bApprox time left to reach Level &e"+(response.new_level+1)+"&b: &d"+ProgressUtils.getTimeLeft(scoreLeft,ZoneController.getPointPerSec(ZoneController.currentZone.difficulty)));
                 return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
-    }
-
-    private static int getZoneScore() {
-        int score=getPointPerSec(currentZone.difficulty);
-        return score*120;
-    }
-
-    private static int getPointPerSec(int difficulty) {
-        switch (currentZone.difficulty){
-            case 1: return 5;
-            case 2: return 10;
-            case 3: return 20;
-        }
-        return 0;
     }
 
     public static void changeGroup(String clanid){
@@ -203,21 +217,6 @@ public class Main {
         else debug("&cError:&r You have already represented this group");
     }
 
-    private static boolean joinZone() {
-//        debug("Joining zone "+currentZone.zone_position+" (difficulty "+highlight(currentZone.difficulty+"")+")");
-        debug("Joining Zone "+TextUtils.getZoneDetailsText(currentZone));
-        String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+currentZone.zone_position);
-        Moshi moshi = new Moshi.Builder().build();
-        JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
-        try {
-            ZoneInfoResponse response = jsonAdapter.fromJson(data);
-            if(response==null || response.response==null || response.response.zone_info==null || response.response.zone_info.captured) return false;
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
     private static void joinPlanet() {
         debug("Attempt to progress in planet " + highlight(currentPlanet));
@@ -262,93 +261,17 @@ public class Main {
     public static String getAvailablePlanet()
     {
         debug(highlight("Searching for planet...",Color.AQUA));
-        if(planetSearchMode==2) return checkFocusPlanet();
-        Planets planets = getPlanets();
-        if(planets==null) return null;
-        if(planetSearchMode==0) return getHighestCapturedPlanet(planets);
-        if(planetSearchMode==1) return getMostXpPlanet(planets);
-        debug("&cError: &rSearch mode is not correct. Please set it again and re-start.");
-        stop();
-        return null;
+        String res = getSearchModeInstance(planetSearchMode).search();
+        Main.debug("&a=> Choose planet &e"+res);
+        return res;
     }
 
-    private static String checkFocusPlanet() {
-        Planet data = getPlanetData(focusPlanet);
-        if(!data.state.active || data.state.captured || data.state.capture_progress>MAX_CAPTURE_RATE){
-            debug("&bFocused Planet &e"+focusPlanet+" &bhas been captured");
-            debug("&bAtuomatically switched to search mode &e1 &binstead");
-            planetSearchMode=1;
-            return getAvailablePlanet();
-        }
-        debug("=> Choose focused Planet "+TextUtils.getPlanetsDetailsText(data));
-        return focusPlanet;
-    }
 
-    public static String getHighestCapturedPlanet(Planets planets){
-        double max = 0;
-        String id="1";
-        for(Planet planet:planets.planets){
-            if(planet.state==null || !planet.state.active || planet.state.captured) continue;
-            debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
-            if(max<planet.state.capture_progress){
-                max = planet.state.capture_progress;
-                id=planet.id;
-            }
-        }
-        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
-        return id;
-    }
-
-    public static String getMostXpPlanet(Planets planets){
-//        noHighDiff=true;
-        totalDiff = new int[5];
-        int[] max = new int[5];
-        String id = "1";
-        for(Planet planet:planets.planets){
-            Planet planetData = getPlanetData(planet.id);
-            int[] difficuties = planetData.getDifficulties();
-            debug("> Planet "+TextUtils.getPlanetsDetailsText(planetData));
-            debug("\tZones: "+TextUtils.getZonesText(planetData));
-//            if(difficuties[3]>0 || difficuties[4]>0) noHighDiff=false;
-            for(int i=4;i>=1;i--){
-                totalDiff[i]+=difficuties[i];
-                if(max[i]<difficuties[i]){
-                    max=difficuties;
-                    id=planet.id;
-                    break;
-                }
-                else if(max[i]>difficuties[i]) break;
-            }
-        }
-        if(isOnlyEasyDiff()){
-            debug("&aThere are only "+addDiffColor("easy zones",1)+" left. Start searching for highest captured planets.");
-            return getHighestCapturedPlanet(planets);
-        }
-        debug(highlight("=> Choose planet "+highlight(id),Color.GREEN));
-        return id;
-    }
-
-    public static Zone getAvailableZone(){
-        debug("Searching for zone");
-        Planet planet = getPlanetData(currentPlanet);
-        if(planet==null) return null;
-        Zone zone = planet.getAvailableZone();
-        if(planetSearchMode==1 && zone.difficulty<3 && (!isNoHighDiff() || noHighCounter>=4)) {
-            noHighCounter=0;
-            instantRestart =true;
-            return null;
-        }
-        else {
-            if(isNoHighDiff()) noHighCounter++;
-            return zone;
-        }
-    }
-
-    private static boolean isNoHighDiff() {
+    public static boolean isNoHighDiff() {
         return totalDiff[3]<=0 && totalDiff[4]<=0;
     }
 
-    private static boolean isOnlyEasyDiff() {
+    public static boolean isOnlyEasyDiff() {
         return isNoHighDiff() && totalDiff[2]<=0 && totalDiff[1]>0;
     }
 
@@ -415,7 +338,20 @@ public class Main {
         return Color.RESET;
     }
 
+    public static void searchWhileWaiting(){
+        stopSearchThread();
+        searchThread = new SearchThread();
+        searchThread.run();
+    }
+
+    private static void stopSearchThread() {
+        if(searchThread!=null && !searchThread.isInterrupted()){
+            searchThread.interrupt();
+        }
+    }
+
     public static void checkVersion(){
+        if(disableUpdate) return;
         //Only check every 5 zones
         if(vcCounter<5){
             vcCounter++;
@@ -428,10 +364,16 @@ public class Main {
         versionThread.start();
     }
 
+    public static SearchMode getSearchModeInstance(int mode){
+        return searchModeManager.getSearchMode(mode);
+    }
+    public static SearchMode getSearchMode(){
+        return getSearchModeInstance(planetSearchMode);
+    }
+
     public static void debug(String s){
         String msg = "["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s+"&r";
         System.out.println(ColorParser.parse(msg));
-//        log(msg);
     }
 
 //    private static void log(String msg) {
@@ -459,40 +401,4 @@ public class Main {
 //        }
 //    }
 
-    private static class ProcessThread extends Thread {
-        @Override
-        public void run() {
-            while(!pause) {
-                try {
-                    leaveCurrentGame();
-                    leaveCurrentPlanet();
-                    progress();
-                }catch (Exception e){
-                    if(!(e instanceof NullPointerException)) e.printStackTrace();
-                }
-                if(!instantRestart) {
-                    debug("Restarting in 8s...");
-                    try {
-                        Thread.sleep(8000);
-                    } catch (InterruptedException e) {
-                    }
-                } else {
-                    instantRestart = false;
-                    debug("Restarting...");
-                }
-            }
-            debug(highlight("Automation stopped",Color.RED));
-        }
-    }
-    private static class CheckVersionThread extends Thread {
-        @Override
-        public void run() {
-            try {
-                compareVersion();
-            } catch (Exception e){
-                if(!(e instanceof NullPointerException))
-                    e.printStackTrace();
-            }
-        }
-    }
 }

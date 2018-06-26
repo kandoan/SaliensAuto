@@ -13,4 +13,8 @@ public class Zone {
         if(type==4) return Main.addDiffColor(Main.getDiffText(4),4);
         return Main.addDiffColor(Main.getDiffText(difficulty),difficulty);
     }
+
+    public String getZoneText(){
+        return String.valueOf(zone_position+1);
+    }
 }
