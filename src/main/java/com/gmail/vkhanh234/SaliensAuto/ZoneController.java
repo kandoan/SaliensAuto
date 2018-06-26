@@ -83,7 +83,7 @@ public class ZoneController {
             }
         }
         if(Main.planetSearchMode==2 && focusZone!=null){
-            Main.debug("Focused Zone &e"+(focusZone+1)+" &r has been captured. Now search for hardest zone instead.");
+            Main.debug("Focused Zone &e"+(Integer.valueOf(focusZone)+1)+" &r has been captured. Now search for hardest zone instead.");
             focusZone = null;
         }
         return res;
