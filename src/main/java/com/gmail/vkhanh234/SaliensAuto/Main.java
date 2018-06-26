@@ -53,6 +53,8 @@ public class Main {
     public static CommandManager commandManager = new CommandManager();
     public static SearchModeManager searchModeManager = new SearchModeManager();
 
+    public static boolean disableUpdate = true;
+
 
     public static void main(String[] args){
         AnsiConsole.systemInstall();
@@ -349,6 +351,7 @@ public class Main {
     }
 
     public static void checkVersion(){
+        if(disableUpdate) return;
         //Only check every 5 zones
         if(vcCounter<5){
             vcCounter++;
