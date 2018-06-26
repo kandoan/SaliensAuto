@@ -48,6 +48,6 @@ public class CommandManager {
     public void showHelps() {
         Main.debug("&bCommands List: ");
         for(CommandAbstract cmd : commands.values()) cmd.showHelp();
-        Main.debug("Don't include the &e< >&r or &e[ ]&r while using command, only the value accordingly." );
+        Main.debug("Don't include the &e< >&r or &e[ ]&r while using command. Replay the whole thing with the value accordingly." );
     }
 }
