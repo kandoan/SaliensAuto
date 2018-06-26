@@ -92,7 +92,6 @@ public class Main {
 
     public static void stop() {
         if(thread!=null && !thread.isInterrupted()) {
-            ZoneController.clear();
             pause=true;
             thread.interrupt();
         }
@@ -108,7 +107,7 @@ public class Main {
                 debug("\t &cPlease set a focused planet with &efocusplanet &ccommand first");
                 return;
             }
-            debug("\t Focused on planet &e"+focusPlanet+" &r"+(ZoneController.focusZone!=null?("and zone &e"+(ZoneController.focusZone+1)):""));
+            debug("\t Focused on planet &e"+focusPlanet+" &r"+(ZoneController.focusZone!=null?("and zone &e"+(Integer.valueOf(ZoneController.focusZone)+1)):""));
         }
         thread = new ProcessThread();
         thread.start();
@@ -123,6 +122,7 @@ public class Main {
     }
 
     public static void progress() {
+        ZoneController.clear();
         if(currentPlanet==null) {
             debug(highlight("No planet found",Color.RED));
             return;
