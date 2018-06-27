@@ -66,8 +66,8 @@ After you openned up the program, you will see a list of commands:
  Commands List:
        settoken <token> - Set your token. Visit https://steamcommunity.com/saliengame/gettoken to get it.
        setsearchmode <0/1/2> - Set the search mode.
-                  Set to 0 (default) to search for highest captured rate planet.
-                  Set to 1 to search for planet with most XP reward.
+                  Set to 0 to search for highest captured rate planet.
+                  Set to 1 (default) to search for planet with most XP reward.
                   Set to 2 to only choose focused planet.
        focusplanet <planet_ID> - Choose planet to focus when search mode is 2. Use planetsinfo command to get planets' ID.
        planetsinfo - Show brief info of all active planets
