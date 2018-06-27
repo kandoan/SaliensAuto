@@ -3,7 +3,6 @@ package com.gmail.vkhanh234.SaliensAuto;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Zone;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.ZoneInfoResponse;
-import com.gmail.vkhanh234.SaliensAuto.searchmode.MostXpMode;
 import com.gmail.vkhanh234.SaliensAuto.utils.ProgressUtils;
 import com.gmail.vkhanh234.SaliensAuto.utils.RequestUtils;
 import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
@@ -11,21 +10,20 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ZoneController {
 
     public static String focusZone;
     public static Zone currentZone;
     public static Zone nextZone;
+    public static boolean switchRecently=true;
 
     public static LinkedList<Double> cachedProgress = new LinkedList<>();
 
 
     public static boolean joinZone(Zone zone) {
-        Main.debug("Joining Zone "+TextUtils.getZoneDetailsText(zone)+" - Planet &e"+Main.currentPlanet);
+        Main.debug("Joining Zone "+TextUtils.getZoneDetailsText(zone.predict())+" - Planet &e"+Main.currentPlanet);
         String data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+zone.zone_position);
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);
@@ -42,12 +40,14 @@ public class ZoneController {
     public static Zone loadBestZone(String p){
         Zone zone;
         if(cachedProgress.size()>0){
-            double predict = getMaxProgress();
+            double predict = getPredictProgress();
+            Main.debug("\t Finding zone with captured rate lower than &e"+ProgressUtils.round((0.985-predict*2)*100,2));
             zone = findBestZone(p,0.985-predict*2);
         }
         else zone = findBestZone(p,0.9);
         if(currentZone!=null && zone.zone_position==currentZone.zone_position){
-            cacheProgress(zone.capture_progress-currentZone.capture_progress);
+            if(!switchRecently) cacheProgress(zone.capture_progress-currentZone.capture_progress);
+            else switchRecently=false;
         }
         else cachedProgress.clear();
         return zone;
@@ -117,8 +117,12 @@ public class ZoneController {
         for(Double d:cachedProgress) sum+=d;
         return sum/cachedProgress.size();
     }
+    private static double getPredictProgress() {
+        return (getAverageProgress()+getMaxProgress())/2;
+    }
 
     public static void clear() {
+        switchRecently=true;
         cachedProgress.clear();
     }
     private static void cacheProgress(double v) {

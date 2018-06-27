@@ -18,14 +18,14 @@ public class RequestUtils {
         return sendRequest(type,dat,true);
     }
 
-    private static String getResponseMessage(int responseCode) {
+    private static String getResponseMessage(int responseCode,Exception e) {
         switch (responseCode){
             case 401: return "Unauthorized. It could mean your token is incorrect.";
             case 403: return "Forbidden";
             case 500: return "Internal Server Error";
             case 503: return "Service Unavailable. Most likely this means server goes down.  Let's wait a little while.";
         }
-        return "Unknown.";
+        return e.getLocalizedMessage();
     }
 
     public static String sendRequest(String type,String dat, boolean post){
@@ -70,8 +70,7 @@ public class RequestUtils {
             return result.toString();
         } catch (IOException e) {
             Main.debug("&cError: &rCan't connect to Steam Server.");
-            Main.debug("\t Response code: &e"+responseCode+" - &e"+getResponseMessage(responseCode));
-            return null;
+            Main.debug("\t Response code: &e"+responseCode+" - &e"+getResponseMessage(responseCode,e));
         }
         finally {
             if(conn!=null) conn.disconnect();
@@ -82,6 +81,7 @@ public class RequestUtils {
                 }
             }
         }
+        return null;
     }
 
     public static String get(String type, String dat) {

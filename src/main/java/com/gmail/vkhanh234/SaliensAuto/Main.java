@@ -53,7 +53,7 @@ public class Main {
     public static CommandManager commandManager = new CommandManager();
     public static SearchModeManager searchModeManager = new SearchModeManager();
 
-    public static boolean disableUpdate = true;
+    public static boolean disableUpdate = false;
 
 
     public static void main(String[] args){
@@ -62,7 +62,8 @@ public class Main {
         checkVersion();
 
         debug(highlight("SaliensAuto "+ VersionUtils.getLocalVersion(),Color.LIGHT_PURPLE));
-        debug("&rPlease keep checking &ahttps://github.com/KickVN/SaliensAuto &cregularly in case there is a new update");
+        debug("&cPlease keep checking &ahttps://github.com/KickVN/SaliensAuto &cregularly in case there is a new update");
+        debug("&cAnd please close all runninng instances of Saliens on the same account in this program. For exampe, close your Saliens on web browser.");
         commandManager.showHelps();
 
         if(args.length>=1) setToken(args[0]);
@@ -123,6 +124,7 @@ public class Main {
 
     public static void progress() {
         ZoneController.clear();
+        currentPlanet = Main.getAvailablePlanet();
         if(currentPlanet==null) {
             debug(highlight("No planet found",Color.RED));
             return;
@@ -142,7 +144,7 @@ public class Main {
                 joinPlanet();
             }
             ZoneController.currentZone = ZoneController.nextZone;
-            ZoneController.currentZone.capture_progress+=ZoneController.getAverageProgress();
+//            ZoneController.currentZone.capture_progress+=ZoneController.getAverageProgress();
             if (ZoneController.currentZone == null) {
                 debug(highlight("No zone found",Color.RED));
                 return;
@@ -169,7 +171,7 @@ public class Main {
                 if(!reportScore()){
                     debug(highlight("Failed to complete the instance. It could mean the zone is captured. Or you're opening Saliens somewhere else. Please close all things related to Saliens.",Color.RED));
                 }
-//                leaveCurrentGame();
+                leaveCurrentGame();
                 debug(highlight("===================================",Color.GREEN));
             } catch (InterruptedException e) {
                 if(!pause) e.printStackTrace();
@@ -241,7 +243,6 @@ public class Main {
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
             debug(highlight("Left planet "+highlight(info.active_planet),Color.AQUA));
         }
-        currentPlanet = getAvailablePlanet();
     }
 
     public static PlayerInfo getPlayerInfo(){
