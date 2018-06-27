@@ -8,8 +8,8 @@ public class SetSearchModeCommand extends CommandAbstract {
         setName("setsearchmode");
         setSyntax("<0/1/2>");
         setDesc("Set the search mode."
-                +"\n\t\t\tSet to 0 (default) to search for highest captured rate planet."
-                +"\n\t\t\tSet to 1 to search for planet with most XP reward."
+                +"\n\t\t\tSet to 0 to search for highest captured rate planet."
+                +"\n\t\t\tSet to 1 (default) to search for planet with most XP reward."
                 +"\n\t\t\tSet to 2 to only choose focused planet."
         );
     }

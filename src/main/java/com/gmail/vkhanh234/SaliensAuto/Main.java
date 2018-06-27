@@ -32,7 +32,7 @@ public class Main {
     public  static String token;
     public static String currentPlanet;
     public static String nextPlanet;
-    public static int planetSearchMode = 0;
+    public static int planetSearchMode = 1;
 
     public static CheckVersionThread versionThread;
     public static ProcessThread thread;
