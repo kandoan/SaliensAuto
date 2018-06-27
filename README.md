@@ -81,7 +81,8 @@ After you openned up the program, you will see a list of commands:
 ```
 Easy to understand right? 
 
-First you set your token with *settoken*. Then you change the search mode with *setsearchmode* and some more followed commands if necessary. And then *start*.
+
+First, you set your token with *settoken*. Then, you can also change the search mode with *setsearchmode* and some more followed commands if necessary. And then *start*.
 
 If you don't know how to get the token, far below I will write a guide.
 
@@ -100,7 +101,9 @@ java -jar <path_of_SaliensAuto> 10a654252939d458563215c9fdsa19 1
 java -jar <path_of_SaliensAuto> 10a654252939d458563215c9fdsa19 0 start
 ```
 # How to get token?
-First you have to go to [this page](https://steamcommunity.com/saliengame/gettoken). From there you can see something like:
+First, make sure you have logged in [steam's website](https://steamcommunity.com/login). 
+
+Then, you have to go to [this page](https://steamcommunity.com/saliengame/gettoken). From there you can see something like:
 ```
 "token":"10a654252939d458563215c9fdsa19"
 ```
