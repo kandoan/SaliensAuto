@@ -22,12 +22,12 @@ public class SearchThread extends Thread {
                 if (isNullZone) {
                     Main.debug("&cError: &rNo zone found. Searching for planet instead...");
                     Main.nextPlanet = Main.getSearchMode().search();
-                    ZoneController.clear();
-                    ZoneController.nextZone = ZoneController.loadBestZone(Main.nextPlanet);
                     if (Main.planetSearchMode == 0 || Main.planetSearchMode==1) Main.searchCounter = 0;
                 }
                 if(Main.nextPlanet!=null && !Main.nextPlanet.equals(Main.currentPlanet)) {
-                    if(!isNullZone) ZoneController.clear();
+//                    if(!isNullZone) ZoneController.clear();
+                    ZoneController.clear();
+                    ZoneController.nextZone = ZoneController.loadBestZone(Main.nextPlanet);
                     Main.debug("Next planet is Planet &e" + Main.nextPlanet);
                 }
                 if(ZoneController.nextZone!=null) {

@@ -41,7 +41,7 @@ public class ZoneController {
         Zone zone;
         if(cachedProgress.size()>0){
             double predict = getPredictProgress();
-            Main.debug("\t Finding zone with captured rate lower than &e"+ProgressUtils.round((0.985-predict*2)*100,2));
+            Main.debug("\t Finding zone with captured rate lower than &e"+ProgressUtils.round((0.985-predict*2)*100,2)+"%");
             zone = findBestZone(p,0.985-predict*2);
         }
         else zone = findBestZone(p,0.9);
