@@ -13,7 +13,7 @@ public class HighestCapturedMode extends SearchMode {
             if(planet.state==null || !planet.state.active || planet.state.captured) continue;
             Main.debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
             if(max<planet.state.capture_progress){
-                max = planet.state.priority;
+                max = planet.state.capture_progress;
                 result = planet.id;
             }
         }
