@@ -1,1 +1,0 @@
-worker: java -jar target/SaliensAuto.jar

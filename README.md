@@ -115,9 +115,6 @@ You absolutely can. Just open the program multiple times and make sure to set th
 Please keep in mind that you still can't open multiple instances for the same account to boost your progress speed. This is only available for botting multiple accounts with different tokens at the same time.
 
 # Automate with Heroku
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-
 Read more here: https://github.com/KickVN/SaliensAuto/wiki/Heroku
 
 # Acknowledgments
