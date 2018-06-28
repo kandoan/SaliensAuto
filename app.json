@@ -8,7 +8,7 @@
       "value": ""
     },
     "SEARCH_MODE": {
-      "description": "Set to 0 or 1 or 2 depend on what you'd like. Read github page for more information on what are they.",
+      "description": "Set to 0 or 1 or 2 depend on what you'd like. Read github page for more information on what they are.",
       "value": "1"
     }
   },

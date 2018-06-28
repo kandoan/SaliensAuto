@@ -1,1 +1,1 @@
-worker: java -jar target/SaliensAuto.jar $SALIENS_TOKEN $SEARCH_MODE 1
+worker: java -jar target/SaliensAuto.jar

@@ -66,9 +66,11 @@ public class Main {
         debug("&cAnd please close all runninng instances of Saliens on the same account in this program. For exampe, close your Saliens on web browser.");
         commandManager.showHelps();
 
-        if(args.length>=1) setToken(args[0]);
-        if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
-        if(args.length>=3) start();
+        try {
+            loadDefault(args);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
 
         Scanner scanner = new Scanner(System.in);
@@ -79,6 +81,27 @@ public class Main {
                 commandManager.handleCommand(s);
             }catch (Exception e){if(!(e instanceof NullPointerException)) e.printStackTrace();}
         }
+    }
+
+    private static void loadDefault(String[] args) {
+        String dToken=null;
+        int dSearchMode=-1;
+        boolean dStart=false;
+        if(System.getenv("SALIENS_TOKEN")!=null) {
+            dToken = System.getenv("SALIENS_TOKEN");
+            dStart=true;
+        }
+        if(System.getenv("SEARCH_MODE")!=null) {
+            dSearchMode = Integer.valueOf(System.getenv("SEARCH_MODE"));
+            dStart=true;
+        }
+        if(args.length>=1) dToken=args[0];
+        if(args.length>=2) dSearchMode=Integer.valueOf(args[1]);
+        if(args.length>=3) dStart=true;
+        if(dToken!=null) setToken(dToken);
+        if(dSearchMode>=0) setPlanetSearchMode(dSearchMode);
+        if(dStart) start();
+
     }
 
     public static void setPlanetSearchMode(int v) {
