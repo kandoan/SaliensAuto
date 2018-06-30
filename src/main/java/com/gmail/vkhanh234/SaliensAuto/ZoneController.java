@@ -79,7 +79,7 @@ public class ZoneController {
         Zone res = null;
         for(Zone zone:planet.zones){
             if(zone.captured || zone.capture_progress>=maxProgress) continue;
-            if(!zone.boss_active && zone.capture_progress<0.4 && skipZones.contains(zone.zone_position)) continue;
+            if(!zone.boss_active && zone.capture_progress<0.3 && skipZones.contains(zone.zone_position)) continue;
             if(Main.planetSearchMode==2 && focusZone!=null && String.valueOf(zone.zone_position).equals(focusZone)) return zone;
             int diff = zone.difficulty;
             if(zone.boss_active) diff=4;
@@ -99,7 +99,7 @@ public class ZoneController {
         int[] result = new int[5];
         for(Zone zone:planet.zones){
             if(zone.captured || zone.capture_progress>=Main.MAX_CAPTURE_RATE) continue;
-            if(!zone.boss_active && zone.capture_progress<0.4 && skipZones.contains(zone.zone_position)) continue;
+            if(!zone.boss_active && zone.capture_progress<0.3 && skipZones.contains(zone.zone_position)) continue;
             if(zone.boss_active) result[4]++;
             else result[zone.difficulty]++;
         }
