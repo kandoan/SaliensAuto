@@ -170,7 +170,6 @@ public class Main {
                 }
                 try {
                     debug("&dWait 110s to complete the instance");
-                    checkVersion();
                     searchWhileWaiting();
                     Thread.sleep(50000);
                     debug("&dWait 60s");
@@ -434,15 +433,15 @@ public class Main {
     }
 
     public static void checkVersion(){
-        if(disableUpdate) return;
-        //Only check every 5 zones
-        if(vcCounter<5){
-            vcCounter++;
-            return;
-        }
-        vcCounter=0;
-
-        if(versionThread!=null && !versionThread.isInterrupted()) versionThread.interrupt();
+//        if(disableUpdate) return;
+//        //Only check every 5 zones
+//        if(vcCounter<5){
+//            vcCounter++;
+//            return;
+//        }
+//        vcCounter=0;
+//
+//        if(versionThread!=null && !versionThread.isInterrupted()) versionThread.interrupt();
         versionThread = new CheckVersionThread();
         versionThread.start();
     }
