@@ -77,7 +77,7 @@ public class Main {
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
         if(args.length>=3 && !args[2].equals("0")) start();
-        if(args.length>=4) accountId = Integer.valueOf(args[3]);
+        if(args.length>=4) setAccountId(Long.valueOf(args[3]));
 
         Scanner scanner = new Scanner(System.in);
         while(true){
