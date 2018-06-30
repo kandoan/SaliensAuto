@@ -75,6 +75,7 @@ After you openned up the program, you will see a list of commands:
                    position can be a number start from 1. For example: 60 means 60th zone when counting left to right, top to bottom
                    or can be <row>,<column>. For example: 3,5 means zone in row 3 and column 5.
        changegroup <groupid> - Change the group you represent. ID 33035916 is /r/saliens group.
+       setaccountid <accountid> - Set your Account ID.
        start - Start the automating process
        stop - Stop the automating process
        exit - Exit the program
@@ -92,13 +93,16 @@ First argument is the *token*.
 
 Second is the search mode. The value is either 1 or 0. What is this search mode? It is described in the commands section above.
 
-Third is to start the automation right after you open the program or not. If yes then write basically anything. Otherwise, don't include this and the automation will only start after you typed the *start* command.
+Third is to start the automation right after you open the program or not. If yes then write basically anything that's not **0**. Otherwise, don't include this or write **0** and the automation will only start after you typed the *start* command.
+
+Fourth is your Account ID. See below to know what it is.
 
 Examples launching with args:
 ```
 java -jar <path_of_SaliensAuto> 10a654252939d458563215c9fdsa19
 java -jar <path_of_SaliensAuto> 10a654252939d458563215c9fdsa19 1
 java -jar <path_of_SaliensAuto> 10a654252939d458563215c9fdsa19 0 start
+java -jar <path_of_SaliensAuto> 10a654252939d458563215c9fdsa19 0 0 156246521
 ```
 # How to get token?
 First, make sure you have logged in [steam's website](https://steamcommunity.com/login). 
@@ -108,6 +112,16 @@ Then, you have to go to [this page](https://steamcommunity.com/saliengame/gettok
 "token":"10a654252939d458563215c9fdsa19"
 ```
 Your token is the nonsense path in between two quotes. Here is *10a654252939d458563215c9fdsa19*
+
+# What is Account ID and how to get?
+Account ID is something like *156246521*
+
+It is used to track your progress while fighting boss. It's totally not required for the program to progress.
+
+To get your Account ID, you can go to [Saliens website](https://steamcommunity.com/saliengame/play/) and search for the line contain **gAccountID**. The number in that line is your Account ID.
+
+You can also go to some steam ID finder site like [this site](https://steamidfinder.com/) to search for your Account ID. Your Account ID is **steamID3** on that site.
+
 
 # Can I automate multiple accounts with different tokens at the same time with this?
 You absolutely can. Just open the program multiple times and make sure to set the token different each time (either by *settoken* command or *\[args]*) then *start* as usual.
