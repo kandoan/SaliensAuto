@@ -60,7 +60,7 @@ public class ZoneController {
             zone = findBestZone(p,0.985-predict*2);
         }
         else zone = findBestZone(p,0.9);
-        if(currentZone!=null && zone.zone_position==currentZone.zone_position){
+        if(currentZone!=null && zone!=null && zone.zone_position==currentZone.zone_position){
             if(!switchRecently) cacheProgress(zone.capture_progress-currentZone.capture_progress);
             else switchRecently=false;
         }
@@ -71,17 +71,7 @@ public class ZoneController {
     public static Zone findBestZone(String p, double maxProgress){
         Planet planet = Main.getPlanetData(p);
         if(planet==null) return null;
-        Zone zone = findBestZone(planet,maxProgress);
-//        if(Main.planetSearchMode==1 && ((zone.difficulty>1 && zone.difficulty<Main.maxDiff) || Main.noHighCounter>=4)) {
-//            Main.noHighCounter=0;
-//            Main.instantRestart=true;
-//            return null;
-//        }
-//        else {
-//            if(Main.planetSearchMode==1 && (zone.difficulty<Main.maxDiff || zone.difficulty==1)) Main.noHighCounter++;
-//            return zone;
-//        }
-        return zone;
+        return findBestZone(planet,maxProgress);
     }
 
     private static Zone findBestZone(Planet planet, double maxProgress) {

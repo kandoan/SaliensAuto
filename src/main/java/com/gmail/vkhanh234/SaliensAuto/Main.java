@@ -7,12 +7,15 @@ import com.gmail.vkhanh234.SaliensAuto.data.Boss.BossPlayer;
 import com.gmail.vkhanh234.SaliensAuto.data.Boss.BossStatus;
 import com.gmail.vkhanh234.SaliensAuto.data.Boss.ReportBossDamage;
 import com.gmail.vkhanh234.SaliensAuto.data.Boss.ReportBossDamageResponse;
+import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
+import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
+import com.gmail.vkhanh234.SaliensAuto.data.Planet.PlanetsResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfo;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
-import com.gmail.vkhanh234.SaliensAuto.data.Planet.*;
-import com.gmail.vkhanh234.SaliensAuto.searchmode.*;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.SearchMode;
+import com.gmail.vkhanh234.SaliensAuto.searchmode.SearchModeManager;
 import com.gmail.vkhanh234.SaliensAuto.thread.CheckVersionThread;
 import com.gmail.vkhanh234.SaliensAuto.thread.ProcessThread;
 import com.gmail.vkhanh234.SaliensAuto.thread.SearchThread;
@@ -22,7 +25,7 @@ import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
 import com.gmail.vkhanh234.SaliensAuto.utils.VersionUtils;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import org.fusesource.jansi.*;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,6 +41,7 @@ public class Main {
     public static String currentPlanet;
     public static String nextPlanet;
     public static int planetSearchMode = 1;
+    public static int accountId;
 
     public static CheckVersionThread versionThread;
     public static ProcessThread thread;
@@ -45,7 +49,6 @@ public class Main {
 
     public static boolean pause=true;
     public static boolean instantRestart=false;
-//    public static boolean noHighDiff=true;
     public static int vcCounter=5;
     public static int noHighCounter=0;
     public static int maxDiff=0;
@@ -60,7 +63,6 @@ public class Main {
 
     public static boolean disableUpdate = false;
 
-    public static int accountId;
 
     public static void main(String[] args){
         AnsiConsole.systemInstall();
@@ -234,12 +236,10 @@ public class Main {
                         continue;
                     }
                     debug("Boss HP: &e"+status.boss_hp+"&r/&e"+status.boss_max_hp);
-                    continue;
                 }
                 else{
                     debug("&aWaiting...");
                     attemp++;
-                    continue;
                 }
             }
         }
@@ -251,22 +251,15 @@ public class Main {
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportBossDamageResponse> jsonAdapter = moshi.adapter(ReportBossDamageResponse.class);
         try {
-            ReportBossDamageResponse res = jsonAdapter.fromJson(data);
-            return res;
+            return jsonAdapter.fromJson(data);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-    public static boolean isSuccess(int percent) {
-        int g = randomNumber(1,100);
-        if (g<=percent) return true;
-        return false;
-    }
 
     public static int randomNumber(int min,int max){
-        Random random = new Random();
-        return random.nextInt((max - min)+1) + min;
+        return new Random().nextInt((max - min)+1) + min;
     }
 
     private static boolean reportScore(){
@@ -295,7 +288,7 @@ public class Main {
     public static void changeGroup(String clanid){
         debug("Changing group...");
         PlayerInfo info = getPlayerInfo();
-        if(info.clan_info==null || !String.valueOf(info.clan_info.accountid).equals(clanid)) {
+        if(info == null || info.clan_info==null || !String.valueOf(info.clan_info.accountid).equals(clanid)) {
             RequestUtils.post("ITerritoryControlMinigameService/RepresentClan", "clanid=" + clanid);
             try {
                 Thread.sleep(1000);
@@ -328,7 +321,7 @@ public class Main {
     public static void leaveCurrentPlanet(){
         debug("Attempt to leave previous planet");
         PlayerInfo info = getPlayerInfo();
-        if(info.active_planet!=null){
+        if(info!=null && info.active_planet!=null){
             RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
             debug(highlight("Left planet "+highlight(info.active_planet),Color.AQUA));
         }
