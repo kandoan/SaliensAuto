@@ -88,7 +88,7 @@ First, you set your token with *settoken*. Then, you can also change the search 
 If you don't know how to get the token, far below I will write a guide.
 
 # What is \[args]
-\[args] are 3 arguments that you can use to set some default value.
+\[args] are 4 arguments that you can use to set some default value.
 First argument is the *token*. 
 
 Second is the search mode. The value is either 1 or 0. What is this search mode? It is described in the commands section above.
@@ -117,6 +117,8 @@ Your token is the nonsense path in between two quotes. Here is *10a654252939d458
 Account ID is something like *156246521*
 
 It is used to track your progress while fighting boss. It's totally not required for the program to progress.
+
+Easiest way is just to use Steam ID which is given in [the page you used to get token](https://steamcommunity.com/saliengame/gettoken). Just pass this to the program and it will be automatically converted to Account ID.
 
 To get your Account ID, you can go to [Saliens website](https://steamcommunity.com/saliengame/play/) and search for the line contain **gAccountID**. The number in that line is your Account ID.
 
