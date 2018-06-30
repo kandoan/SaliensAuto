@@ -130,6 +130,7 @@ Please keep in mind that you still can't open multiple instances for the same ac
 
 # Automate with Heroku
 Read more here: https://github.com/KickVN/SaliensAuto/wiki/Heroku
-
+**WARNING:** Your Heroku account may get banned by doing this. I haven't got any report about account suspended from anybody using this program.
+ But many other scripts with similar functions as us have their users' heroku account suspended. I'm still using this on Heroku just fine. But still I can't ensure your Heroku account's safeness.
 # Acknowledgments
 This project is inspired from [SalienCheat](https://github.com/SteamDatabase/SalienCheat). Big thank.
