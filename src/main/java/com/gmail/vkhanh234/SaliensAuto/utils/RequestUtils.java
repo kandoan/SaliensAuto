@@ -129,7 +129,8 @@ public class RequestUtils {
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
-            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
+            conn.setRequestProperty("User-Agent","SaliensAuto (https://github.com/KickVN/SaliensAuto)");
+//            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
             conn.setUseCaches(false);
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF8"));
             if (conn.getResponseCode() != 200) return null;
