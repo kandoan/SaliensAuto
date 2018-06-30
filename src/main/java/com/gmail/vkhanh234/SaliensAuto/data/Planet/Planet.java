@@ -31,16 +31,6 @@ public class Planet{
 //        return res;
 //    }
 
-    public int[] getDifficulties() {
-        int[] result = new int[5];
-        for(Zone zone:zones){
-            if(zone.captured || zone.capture_progress>=Main.MAX_CAPTURE_RATE) continue;
-            if(zone.boss_active) result[4]++;
-            else result[zone.difficulty]++;
-        }
-        return result;
-    }
-
     public int getDiffValue(int diff){
         switch (diff){
             case 1: return 1;

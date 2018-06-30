@@ -1,6 +1,7 @@
 package com.gmail.vkhanh234.SaliensAuto.searchmode;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
+import com.gmail.vkhanh234.SaliensAuto.ZoneController;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planets;
 import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
@@ -13,7 +14,7 @@ public class MostXpMode extends SearchMode {
         String result=null;
         for(Planet planet:planets.planets){
             Planet planetData = Main.getPlanetData(planet.id);
-            int[] difficuties = planetData.getDifficulties();
+            int[] difficuties = ZoneController.getDifficulties(planetData);
             Main.debug("> Planet "+TextUtils.getPlanetsDetailsText(planetData));
             Main.debug("\tZones: "+TextUtils.getZonesText(planetData));
             for(int i=4;i>=1;i--){

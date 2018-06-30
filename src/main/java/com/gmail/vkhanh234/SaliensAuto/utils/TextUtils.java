@@ -1,6 +1,7 @@
 package com.gmail.vkhanh234.SaliensAuto.utils;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
+import com.gmail.vkhanh234.SaliensAuto.ZoneController;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Planet;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.TopClan;
 import com.gmail.vkhanh234.SaliensAuto.data.Planet.Zone;
@@ -14,7 +15,7 @@ public class TextUtils {
         Planet planetData;
         if(p.zones==null || p.zones.size()==0) planetData = Main.getPlanetData(p.id);
         else planetData=p;
-        int[] difficuties = planetData.getDifficulties();
+        int[] difficuties = ZoneController.getDifficulties(planetData);
         String s = "";
         for(int i=1;i<=4;i++){
             s+=Main.addDiffColor(difficuties[i]+" "+Main.getDiffText(i),i)+", ";

@@ -95,6 +95,17 @@ public class ZoneController {
         return res;
     }
 
+    public static int[] getDifficulties(Planet planet) {
+        int[] result = new int[5];
+        for(Zone zone:planet.zones){
+            if(zone.captured || zone.capture_progress>=Main.MAX_CAPTURE_RATE) continue;
+            if(!zone.boss_active && zone.capture_progress<0.4 && skipZones.contains(zone.zone_position)) continue;
+            if(zone.boss_active) result[4]++;
+            else result[zone.difficulty]++;
+        }
+        return result;
+    }
+
     public static int getZoneScore() {
         int score=getPointPerSec(currentZone.difficulty);
         return score*120;
