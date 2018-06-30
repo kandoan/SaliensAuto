@@ -89,11 +89,16 @@ public class RequestUtils {
             }
             if(eresult>0){
                 if(eresult!=1){
-                    Main.debug("\tEResult: &c"+eresult+"&r"+(errorMessage!=null?(" - Error message: &c"+errorMessage):""));
+                    Main.debug("\tEResult: &c"+eresult+"&r"+(errorMessage!=null?(" - Error message: &c"+convertErrorMessage(eresult,errorMessage)):""));
                 }
             }
         }
         return null;
+    }
+
+    private static String convertErrorMessage(int eresult, String errorMessage) {
+        if(eresult==17) return "Steam doesn't allow us to join this zone";
+        return errorMessage;
     }
 
     private static int getEResult(HttpsURLConnection conn) {
