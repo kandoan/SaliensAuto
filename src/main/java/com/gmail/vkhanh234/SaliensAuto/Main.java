@@ -459,9 +459,9 @@ public class Main {
         System.out.println(ColorParser.parse(msg));
     }
 
-    public static void setAccountId(int v) {
-        accountId = v;
-        Main.debug("&eAccount ID &rhas been set to &e"+v);
+    public static void setAccountId(long v) {
+        accountId = Long.valueOf(v&0xFFFFFFFF).intValue();
+        Main.debug("&eAccount ID &rhas been set to &e"+accountId);
     }
 
 //    private static void log(String msg) {
