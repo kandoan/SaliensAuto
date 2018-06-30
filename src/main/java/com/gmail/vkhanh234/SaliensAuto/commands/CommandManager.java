@@ -15,6 +15,7 @@ public class CommandManager {
         addCommand(new PlanetsInfoCommand());
         addCommand(new FocusZoneCommand());
         addCommand(new ChangeGroupCommand());
+        addCommand(new SetAccountIdCommand());
 
         addCommand(new StartCommand());
         addCommand(new StopCommand());

@@ -89,7 +89,7 @@ public class RequestUtils {
             }
             if(eresult>0){
                 if(eresult!=1){
-                    Main.debug("\t EResult: &c"+eresult+"&r"+(errorMessage!=null?(" - Error message: &c"+errorMessage):""));
+                    Main.debug("\tEResult: &c"+eresult+"&r"+(errorMessage!=null?(" - Error message: &c"+errorMessage):""));
                 }
             }
         }

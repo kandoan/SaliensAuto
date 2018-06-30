@@ -92,7 +92,7 @@ public class Main {
         debug(highlight("Planet Search Mode")+" has been set to "+highlight(planetSearchMode+""));
     }
 
-    private static void setToken(String s) {
+    public static void setToken(String s) {
         token = s;
         debug(highlight("Token")+" has been set to "+highlight(token));
     }
@@ -464,6 +464,11 @@ public class Main {
     public static void debug(String s){
         String msg = "["+new SimpleDateFormat("HH:mm:ss").format(new Date())+"] "+s+"&r";
         System.out.println(ColorParser.parse(msg));
+    }
+
+    public static void setAccountId(int v) {
+        accountId = v;
+        Main.debug("&eAccount ID &rhas been set to &e"+v);
     }
 
 //    private static void log(String msg) {
