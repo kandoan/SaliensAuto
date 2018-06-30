@@ -34,6 +34,8 @@ public class RequestUtils {
             return null;
         }
         int responseCode = -1;
+        int eresult = -1;
+        String errorMessage=null;
         BufferedReader in=null;
         HttpsURLConnection conn=null;
         try {
@@ -51,7 +53,8 @@ public class RequestUtils {
             conn.setRequestProperty("Origin", "https://steamcommunity.com");
             conn.setRequestProperty("Accept", "*/*");
             conn.setRequestProperty("Referer", "https://steamcommunity.com/saliengame/play");
-            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
+//            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
+            conn.setRequestProperty("User-Agent","SaliensAuto (https://github.com/KickVN/SaliensAuto)");
             conn.setUseCaches(false);
             if(post) {
                 DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
@@ -61,6 +64,10 @@ public class RequestUtils {
                 wr.write(postData);
             }
             responseCode = conn.getResponseCode();
+
+            eresult = getEResult(conn);
+            errorMessage = getErrorMessage(conn);
+
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder result = new StringBuilder();
             String line;
@@ -70,7 +77,7 @@ public class RequestUtils {
             return result.toString();
         } catch (IOException e) {
             Main.debug("&cError: &rCan't connect to Steam Server.");
-            Main.debug("\t Response code: &e"+responseCode+" - &e"+getResponseMessage(responseCode,e));
+            Main.debug("\tResponse code: &e"+responseCode+" - &e"+getResponseMessage(responseCode,e));
         }
         finally {
             if(conn!=null) conn.disconnect();
@@ -80,8 +87,26 @@ public class RequestUtils {
                 } catch (IOException e) {
                 }
             }
+            if(eresult>0){
+                if(eresult!=1){
+                    Main.debug("\t EResult: &c"+eresult+"&r"+(errorMessage!=null?(" - Error message: &c"+errorMessage):""));
+                }
+            }
         }
         return null;
+    }
+
+    private static int getEResult(HttpsURLConnection conn) {
+        String s = conn.getHeaderField("x-eresult");
+        if(s==null) s = conn.getHeaderField("X-eresult");
+        if(s==null) return -1;
+        return Integer.valueOf(s);
+    }
+
+    private static String getErrorMessage(HttpsURLConnection conn) {
+        String s = conn.getHeaderField("x-error_message");
+        if(s==null) s = conn.getHeaderField("X-error_message");
+        return s;
     }
 
     public static String get(String type, String dat) {

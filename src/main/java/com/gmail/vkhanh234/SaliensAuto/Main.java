@@ -3,6 +3,10 @@ package com.gmail.vkhanh234.SaliensAuto;
 import com.gmail.vkhanh234.SaliensAuto.colors.Color;
 import com.gmail.vkhanh234.SaliensAuto.colors.ColorParser;
 import com.gmail.vkhanh234.SaliensAuto.commands.CommandManager;
+import com.gmail.vkhanh234.SaliensAuto.data.Boss.BossPlayer;
+import com.gmail.vkhanh234.SaliensAuto.data.Boss.BossStatus;
+import com.gmail.vkhanh234.SaliensAuto.data.Boss.ReportBossDamage;
+import com.gmail.vkhanh234.SaliensAuto.data.Boss.ReportBossDamageResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfo;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
@@ -23,6 +27,7 @@ import org.fusesource.jansi.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.Scanner;
 
 
@@ -55,6 +60,7 @@ public class Main {
 
     public static boolean disableUpdate = false;
 
+    public static int accountId;
 
     public static void main(String[] args){
         AnsiConsole.systemInstall();
@@ -68,7 +74,8 @@ public class Main {
 
         if(args.length>=1) setToken(args[0]);
         if(args.length>=2) setPlanetSearchMode(Integer.valueOf(args[1]));
-        if(args.length>=3) start();
+        if(args.length>=3 && !args[2].equals("0")) start();
+        if(args.length>=4) accountId = Integer.valueOf(args[3]);
 
         Scanner scanner = new Scanner(System.in);
         while(true){
@@ -122,22 +129,25 @@ public class Main {
     }
 
     public static void progress() {
-        ZoneController.clear();
-        currentPlanet = Main.getAvailablePlanet();
-        if(currentPlanet==null) {
+        ZoneController.clearCachedProgress();
+        nextPlanet = Main.getAvailablePlanet();
+        if(nextPlanet==null) {
             debug(highlight("No planet found",Color.RED));
             return;
         }
         else {
+            ZoneController.clearSkipZones();
+            currentPlanet=nextPlanet;
             joinPlanet();
         }
         Main.debug("Searching for zone");
         ZoneController.currentZone = ZoneController.loadBestZone(currentPlanet);
-        nextPlanet=currentPlanet;
+//        nextPlanet=currentPlanet;
         ZoneController.nextZone=ZoneController.currentZone;
         while(!pause) {
             stopSearchThread();
             if(!currentPlanet.equals(nextPlanet)){
+                ZoneController.clearSkipZones();
                 leaveCurrentPlanet();
                 currentPlanet=nextPlanet;
                 joinPlanet();
@@ -148,35 +158,115 @@ public class Main {
                 debug(highlight("No zone found",Color.RED));
                 return;
             }
-            if (!ZoneController.joinZone(ZoneController.currentZone)) {
-                debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.getZoneText()+""),Color.RED));
-                return;
+            if(ZoneController.currentZone.boss_active){
+                progressBoss();
             }
-            try {
-                debug("&dWait 110s to complete the instance");
-                checkVersion();
-                searchWhileWaiting();
-                Thread.sleep(50000);
-                debug("&dWait 60s");
-                Thread.sleep(30000);
-                debug("&dWait 30s");
-                Thread.sleep(15000);
-                debug("&dWait 15s");
-                Thread.sleep(5000);
-                debug("&dWait 10s");
-                Thread.sleep(5000);
-                debug("&dWait 5s");
-                Thread.sleep(5000);
-                if(!reportScore()){
-                    debug(highlight("Failed to complete the instance. It could mean the zone is captured. Or you're opening Saliens somewhere else. Please close all things related to Saliens.",Color.RED));
+            else {
+                if (!ZoneController.joinZone(ZoneController.currentZone)) {
+                    debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.getZoneText() + ""), Color.RED));
+                    return;
                 }
-                leaveCurrentGame();
-                debug(highlight("===================================",Color.GREEN));
-            } catch (InterruptedException e) {
-                if(!pause) e.printStackTrace();
-                return;
+                try {
+                    debug("&dWait 110s to complete the instance");
+                    checkVersion();
+                    searchWhileWaiting();
+                    Thread.sleep(50000);
+                    debug("&dWait 60s");
+                    Thread.sleep(30000);
+                    debug("&dWait 30s");
+                    Thread.sleep(15000);
+                    debug("&dWait 15s");
+                    Thread.sleep(5000);
+                    debug("&dWait 10s");
+                    Thread.sleep(5000);
+                    debug("&dWait 5s");
+                    Thread.sleep(5000);
+                    if (!reportScore()) {
+                        debug(highlight("Failed to complete the instance. It could mean the zone is captured. Or you're opening Saliens somewhere else. Please close all things related to Saliens.", Color.RED));
+                    }
+                    leaveCurrentGame();
+                    debug(highlight("===================================", Color.GREEN));
+                } catch (InterruptedException e) {
+                    if (!pause) e.printStackTrace();
+                    return;
+                }
             }
         }
+    }
+
+    private static void progressBoss() {
+        ZoneController.joinZone(ZoneController.currentZone,true);
+        int attemp=0;
+        long healTime = randomNumber(26,34);
+        while (true){
+            if(attemp>=10) return;
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int damage = 1;
+            int damageTaken = 0;
+            int heal=0;
+            if(healTime--<=0){
+                heal=1;
+//                damageTaken=randomNumber(20,80);
+                healTime=randomNumber(26,34);
+            }
+
+            ReportBossDamageResponse res = reportBossDamage(damage,heal,damageTaken);
+            if(res!=null && res.response!=null){
+                ReportBossDamage response = res.response;
+                if(response.boss_status!=null) {
+                    BossStatus status = response.boss_status;
+                    if(status.boss_players!=null && status.boss_players.size()>0) {
+                        for (BossPlayer player : status.boss_players){
+                            if(Main.accountId>0 && player.accountid!=Main.accountId) continue;
+                            debug("Player HP: &e"+player.hp+"&r/&e"+player.max_hp+"&r - XP earned: &b"+player.xp_earned);
+                        }
+                    }
+                    if(status.game_over){
+                        debug("&bBoss is done!");
+                        break;
+                    }
+                    if(status.waiting_for_players){
+                        debug("&aWaiting for players...");
+                        continue;
+                    }
+                    debug("Boss HP: &e"+status.boss_hp+"&r/&e"+status.boss_max_hp);
+                    continue;
+                }
+                else{
+                    debug("&aWaiting...");
+                    attemp++;
+                    continue;
+                }
+            }
+        }
+    }
+
+    private static ReportBossDamageResponse reportBossDamage(int damage, int heal, int damageTaken) {
+        String data = RequestUtils.post("ITerritoryControlMinigameService/ReportBossDamage","use_heal_ability="+heal+"&damage_to_boss="+damage
+                +"&damage_taken="+damageTaken);
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<ReportBossDamageResponse> jsonAdapter = moshi.adapter(ReportBossDamageResponse.class);
+        try {
+            ReportBossDamageResponse res = jsonAdapter.fromJson(data);
+            return res;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static boolean isSuccess(int percent) {
+        int g = randomNumber(1,100);
+        if (g<=percent) return true;
+        return false;
+    }
+
+    public static int randomNumber(int min,int max){
+        Random random = new Random();
+        return random.nextInt((max - min)+1) + min;
     }
 
     private static boolean reportScore(){

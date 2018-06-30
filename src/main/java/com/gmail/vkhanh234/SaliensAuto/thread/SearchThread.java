@@ -2,7 +2,6 @@ package com.gmail.vkhanh234.SaliensAuto.thread;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
 import com.gmail.vkhanh234.SaliensAuto.ZoneController;
-import com.gmail.vkhanh234.SaliensAuto.searchmode.HighestCapturedMode;
 import com.gmail.vkhanh234.SaliensAuto.utils.TextUtils;
 
 public class SearchThread extends Thread {
@@ -25,8 +24,8 @@ public class SearchThread extends Thread {
                     if (Main.planetSearchMode == 0 || Main.planetSearchMode==1) Main.searchCounter = 0;
                 }
                 if(Main.nextPlanet!=null && !Main.nextPlanet.equals(Main.currentPlanet)) {
-//                    if(!isNullZone) ZoneController.clear();
-                    ZoneController.clear();
+//                    if(!isNullZone) ZoneController.clearCachedProgress();
+                    ZoneController.clearCachedProgress();
                     ZoneController.nextZone = ZoneController.loadBestZone(Main.nextPlanet);
                     Main.debug("Next planet is Planet &e" + Main.nextPlanet);
                 }
