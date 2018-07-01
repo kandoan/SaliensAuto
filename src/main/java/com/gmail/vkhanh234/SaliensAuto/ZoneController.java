@@ -15,6 +15,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ZoneController {
+    public static final double MAX_BOSS_RATE = 0.97;
+    public static final double MAX_ZONE_RATE = 0.93;
+
 
     public static String focusZone;
     public static Zone currentZone;
@@ -78,7 +81,7 @@ public class ZoneController {
         int maxDiff = Integer.MIN_VALUE;
         Zone res = null;
         for(Zone zone:planet.zones){
-            if(zone.captured || zone.capture_progress>=maxProgress) continue;
+            if(zone.captured || (zone.boss_active && zone.capture_progress>=MAX_BOSS_RATE) || (!zone.boss_active && zone.capture_progress>=maxProgress)) continue;
 //            if(!zone.boss_active && zone.capture_progress<0.3 && skipZones.contains(zone.zone_position)) continue;
             if(Main.planetSearchMode==2 && focusZone!=null && String.valueOf(zone.zone_position).equals(focusZone)) return zone;
             int diff = zone.difficulty;
@@ -98,7 +101,7 @@ public class ZoneController {
     public static int[] getDifficulties(Planet planet) {
         int[] result = new int[5];
         for(Zone zone:planet.zones){
-            if(zone.captured || zone.capture_progress>=Main.MAX_CAPTURE_RATE) continue;
+            if(zone.captured || (zone.boss_active && zone.capture_progress>=MAX_BOSS_RATE) || (!zone.boss_active && zone.capture_progress>=MAX_ZONE_RATE)) continue;
 //            if(!zone.boss_active && zone.capture_progress<0.3 && skipZones.contains(zone.zone_position)) continue;
             if(zone.boss_active) result[4]++;
             else result[zone.difficulty]++;
