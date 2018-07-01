@@ -262,7 +262,7 @@ public class Main {
                         continue;
                     }
                     debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+response.num_laser_uses+"&r - Team heals: &e"+response.num_team_heals);
-                    if(status.boss_max_hp<=0){
+                    if(status.boss_hp<=0){
                         debug("&eBoss died");
                         return;
                     }
