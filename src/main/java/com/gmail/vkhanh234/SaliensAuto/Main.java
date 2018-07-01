@@ -207,12 +207,20 @@ public class Main {
         ZoneController.joinZone(ZoneController.currentZone,true);
         int attemp=0;
         long healTime = randomNumber(26,28);
+        boolean waitingPlayers=false;
         while (true){
             if(attemp>=10) return;
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {}
-            int damage = 1;
+
+            int damage;
+            if(waitingPlayers){
+                damage=0;
+                waitingPlayers=false;
+            }
+            else damage = randomNumber(100,250);
+
             int damageTaken = 0;
             int heal=0;
             if(healTime--<=0){
@@ -259,6 +267,7 @@ public class Main {
                     }
                     if(status.waiting_for_players){
                         debug("&aWaiting for players...");
+                        waitingPlayers=true;
                         continue;
                     }
                     debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+response.num_laser_uses+"&r - Team heals: &e"+response.num_team_heals);
