@@ -251,7 +251,7 @@ public class Main {
                         debug("&aWaiting for players...");
                         continue;
                     }
-                    debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+status.num_laser_uses+"&r - Team heals: &e"+status.num_team_heals);
+                    debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+response.num_laser_uses+"&r - Team heals: &e"+response.num_team_heals);
                 }
                 else{
                     debug("&aWaiting...");
