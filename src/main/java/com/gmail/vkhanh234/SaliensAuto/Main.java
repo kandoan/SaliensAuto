@@ -168,6 +168,7 @@ public class Main {
             }
             if(ZoneController.currentZone.boss_active){
                 progressBoss();
+                instantRestart=true;
                 return;
             }
             else {
@@ -228,7 +229,6 @@ public class Main {
             }
             if(res.eResult==11){
                 debug("&cYou probably died. Attempt to restart...");
-                instantRestart=true;
                 return;
             }
             if(res.response!=null){
@@ -237,9 +237,18 @@ public class Main {
                     BossStatus status = response.boss_status;
                     if(status.boss_players!=null && status.boss_players.size()>0) {
                         if(Main.accountId>0) {
+                            BossPlayer main=null;
                             for (BossPlayer player : status.boss_players) {
                                 if (player.accountid != Main.accountId) continue;
-                                debug("Your HP: &e" + TextUtils.formatNumber(player.hp) + "&r/&e" + TextUtils.formatNumber(player.max_hp) + "&r - XP earned: &b" + TextUtils.formatNumber(player.xp_earned));
+                                main=player;
+                                break;
+                            }
+                            if(main!=null) {
+                                debug("Your HP: &e" + TextUtils.formatNumber(main.hp) + "&r/&e" + TextUtils.formatNumber(main.max_hp) + "&r - XP earned: &b" + TextUtils.formatNumber(main.xp_earned));
+                                if(main.hp<=0){
+                                    debug("\t&bNo HP left. Attempt to restart...");
+                                    return;
+                                }
                             }
                         }
                     }
