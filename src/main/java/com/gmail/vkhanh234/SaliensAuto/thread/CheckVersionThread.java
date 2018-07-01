@@ -8,11 +8,13 @@ public class CheckVersionThread extends Thread {
         while(true) {
             try {
                 Main.compareVersion();
-                Thread.sleep(600000);
             } catch (Exception e) {
-                if (!(e instanceof NullPointerException))
-                    e.printStackTrace();
             }
+            try {
+                Thread.sleep(600000);
+            } catch (InterruptedException e) {
+            }
+
         }
     }
 }
