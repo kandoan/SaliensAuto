@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ZoneController {
-    public static final double MAX_BOSS_RATE = 0.97;
+    public static final double MAX_BOSS_RATE = 0.99;
     public static final double MAX_ZONE_RATE = 0.93;
 
 
