@@ -11,7 +11,7 @@ public class HighestCapturedMode extends SearchMode {
         double max = 0;
         for(Planet planet:planets.planets){
             if(planet.state==null || !planet.state.active || planet.state.captured) continue;
-            Main.debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
+            if(!Main.stealthSearch) Main.debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
             if(max<planet.state.capture_progress){
                 max = planet.state.capture_progress;
                 result = planet.id;

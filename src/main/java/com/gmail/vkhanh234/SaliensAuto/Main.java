@@ -42,7 +42,7 @@ public class Main {
     public static String currentPlanet;
     public static String nextPlanet;
     public static int planetSearchMode = 1;
-    public static int accountId;
+    public static int accountId=0;
 
     public static CheckVersionThread versionThread;
     public static ProcessThread thread;
@@ -56,6 +56,7 @@ public class Main {
     public static int[] totalDiff = new int[5];
 
     public static int searchCounter=0;
+    public static boolean stealthSearch=false;
 
     public static String focusPlanet;
 
@@ -109,8 +110,6 @@ public class Main {
     }
 
     public static void start(){
-        stop();
-        pause=false;
         debug("Starting >> Token: "+highlight(token)+" - Search mode: "+highlight(planetSearchMode+""));
         if(planetSearchMode==2) {
             if(focusPlanet==null){
@@ -119,9 +118,15 @@ public class Main {
             }
             debug("\t Focused on planet &e"+focusPlanet+" &r"+(ZoneController.focusZone!=null?("and zone &e"+(Integer.valueOf(ZoneController.focusZone)+1)):""));
         }
+        startProcessThread();
+
+    }
+
+    public static void startProcessThread() {
+        stop();
+        pause=false;
         thread = new ProcessThread();
         thread.start();
-
     }
 
     public static String highlight(String s) {
@@ -211,6 +216,7 @@ public class Main {
             int heal=0;
             if(healTime--<=0){
                 heal=1;
+                debug("Attempt to use &eHeal&r skill");
 //                damageTaken=randomNumber(20,80);
                 healTime=randomNumber(26,28);
             }
@@ -221,7 +227,7 @@ public class Main {
                 return;
             }
             if(res.eResult==11){
-                debug("&cYou probably died. Attempt restarting...");
+                debug("&cYou probably died. Attempt to restart...");
                 instantRestart=true;
                 return;
             }
@@ -230,9 +236,11 @@ public class Main {
                 if(response.boss_status!=null) {
                     BossStatus status = response.boss_status;
                     if(status.boss_players!=null && status.boss_players.size()>0) {
-                        for (BossPlayer player : status.boss_players){
-                            if(Main.accountId>0 && player.accountid!=Main.accountId) continue;
-                            debug("Your HP: &e"+TextUtils.formatNumber(player.hp)+"&r/&e"+TextUtils.formatNumber(player.max_hp)+"&r - XP earned: &b"+TextUtils.formatNumber(player.xp_earned));
+                        if(Main.accountId>0) {
+                            for (BossPlayer player : status.boss_players) {
+                                if (player.accountid != Main.accountId) continue;
+                                debug("Your HP: &e" + TextUtils.formatNumber(player.hp) + "&r/&e" + TextUtils.formatNumber(player.max_hp) + "&r - XP earned: &b" + TextUtils.formatNumber(player.xp_earned));
+                            }
                         }
                     }
                     if(status.game_over){

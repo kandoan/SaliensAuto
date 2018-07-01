@@ -15,8 +15,10 @@ public class MostXpMode extends SearchMode {
         for(Planet planet:planets.planets){
             Planet planetData = Main.getPlanetData(planet.id);
             int[] difficuties = ZoneController.getDifficulties(planetData);
-            Main.debug("> Planet "+TextUtils.getPlanetsDetailsText(planetData));
-            Main.debug("\tZones: "+TextUtils.getZonesText(planetData));
+            if(!Main.stealthSearch) {
+                Main.debug("> Planet " + TextUtils.getPlanetsDetailsText(planetData));
+                Main.debug("\tZones: " + TextUtils.getZonesText(planetData));
+            }
             for(int i=4;i>=1;i--){
                 Main.totalDiff[i]+=difficuties[i];
                 if(difficuties[i]>0 && i>Main.maxDiff) Main.maxDiff=i;
@@ -29,7 +31,7 @@ public class MostXpMode extends SearchMode {
             }
         }
         if(Main.isOnlyEasyDiff()){
-            Main.debug("&aThere are only "+Main.addDiffColor("easy zones",1)+" left. Start searching for highest captured planets.");
+            if(!Main.stealthSearch) Main.debug("&aThere are only "+Main.addDiffColor("easy zones",1)+" left. Start searching for highest captured planets.");
             return Main.getSearchModeInstance(0).search(planets);
         }
         return result;
