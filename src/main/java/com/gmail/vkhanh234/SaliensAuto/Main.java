@@ -146,11 +146,10 @@ public class Main {
         else {
             ZoneController.clearSkipZones();
             currentPlanet=nextPlanet;
-            joinPlanet();
+            if(!joinPlanet()) return;
         }
         Main.debug("Searching for zone");
         ZoneController.currentZone = ZoneController.loadBestZone(currentPlanet);
-//        nextPlanet=currentPlanet;
         ZoneController.nextZone=ZoneController.currentZone;
         while(!pause) {
             stopSearchThread();
@@ -158,7 +157,7 @@ public class Main {
                 ZoneController.clearSkipZones();
                 leaveCurrentPlanet();
                 currentPlanet=nextPlanet;
-                joinPlanet();
+                if(!joinPlanet()) return;
             }
             ZoneController.currentZone = ZoneController.nextZone;
 //            ZoneController.currentZone.capture_progress+=ZoneController.getAverageProgress();
@@ -219,7 +218,7 @@ public class Main {
                 heal=1;
                 debug("Attempt to use &eHeal&r skill");
 //                damageTaken=randomNumber(20,80);
-                healTime=randomNumber(26,28);
+                healTime=26;
             }
 
             ReportBossDamageResponse res = reportBossDamage(damage,heal,damageTaken);
@@ -261,6 +260,9 @@ public class Main {
                         continue;
                     }
                     debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+response.num_laser_uses+"&r - Team heals: &e"+response.num_team_heals);
+                    if(status.boss_max_hp<=0){
+                        debug("&eBoss died");
+                    }
                 }
                 else{
                     debug("&aWaiting...");
@@ -330,29 +332,44 @@ public class Main {
     }
 
 
-    private static void joinPlanet() {
+    private static boolean joinPlanet() {
         debug("Attempt to progress in planet " + highlight(currentPlanet));
-        RequestUtils.post("ITerritoryControlMinigameService/JoinPlanet","id="+currentPlanet);
+        RequestResult result = RequestUtils.post("ITerritoryControlMinigameService/JoinPlanet","id="+currentPlanet);
+        if(result.eResult!=1){
+            debug("Can't join Planet &e"+currentPlanet);
+            return false;
+        }
+        return true;
     }
 
 
-    public static void leaveCurrentGame(){
+    public static boolean leaveCurrentGame(){
         debug("Attempt to leave previous zone");
         PlayerInfo info = getPlayerInfo();
         if(info.active_zone_game!=null){
-            RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_zone_game);
-            debug(highlight("Left game "+highlight(info.active_zone_game),Color.AQUA));
+            RequestResult result = RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_zone_game);
+            if(result.eResult==1) {
+                debug(highlight("Left game " + highlight(info.active_zone_game), Color.AQUA));
+                return true;
+            }
+            else debug("&eError:&r Can't leave zone");
         }
         if(info.active_planet!=null) currentPlanet = info.active_planet;
+        return false;
     }
 
-    public static void leaveCurrentPlanet(){
+    public static boolean leaveCurrentPlanet(){
         debug("Attempt to leave previous planet");
         PlayerInfo info = getPlayerInfo();
         if(info!=null && info.active_planet!=null){
-            RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
-            debug(highlight("Left planet "+highlight(info.active_planet),Color.AQUA));
+            RequestResult result = RequestUtils.post("IMiniGameService/LeaveGame","gameid="+info.active_planet);
+            if(result.eResult==1) {
+                debug(highlight("Left planet " + highlight(info.active_planet), Color.AQUA));
+                return true;
+            }
+            else debug("&eError:&r Can't leave planet");
         }
+        return false;
     }
 
     public static PlayerInfo getPlayerInfo(){
