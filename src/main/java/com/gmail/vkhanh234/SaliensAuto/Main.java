@@ -101,11 +101,11 @@ public class Main {
     }
 
     public static void stop() {
+        debug(highlight("Stopping...",Color.RED));
         if(thread!=null && !thread.isInterrupted()) {
             pause=true;
             thread.interrupt();
         }
-        debug(highlight("Stopping...",Color.RED));
     }
 
     public static void start(){
@@ -135,7 +135,7 @@ public class Main {
         return color.getTag()+s+Color.RESET.getTag();
     }
 
-    public static void progress() {
+    public static void progress() throws InterruptedException {
         ZoneController.clearCachedProgress();
         nextPlanet = Main.getAvailablePlanet();
         if(nextPlanet==null) {
@@ -179,7 +179,6 @@ public class Main {
                     debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.getZoneText() + ""), Color.RED));
                     return;
                 }
-                try {
                     debug("&dWait 110s to complete the instance");
                     searchWhileWaiting();
                     Thread.sleep(50000);
@@ -198,10 +197,6 @@ public class Main {
                     }
                     leaveCurrentGame();
                     debug(highlight("===================================", Color.GREEN));
-                } catch (InterruptedException e) {
-                    if (!pause) e.printStackTrace();
-                    return;
-                }
             }
         }
     }

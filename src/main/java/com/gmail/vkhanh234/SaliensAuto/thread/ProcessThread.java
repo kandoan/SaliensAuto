@@ -11,7 +11,10 @@ public class ProcessThread extends Thread {
                     Main.leaveCurrentPlanet();
                     Main.progress();
                 }catch (Exception e){
-                    if(!(e instanceof NullPointerException))
+                    if(e instanceof InterruptedException){
+                        break;
+                    }
+                    else if(!(e instanceof NullPointerException))
                         e.printStackTrace();
                 }
                 if(!Main.instantRestart) {
