@@ -146,7 +146,8 @@ public class Main {
         else {
             ZoneController.clearSkipZones();
             currentPlanet=nextPlanet;
-            if(!joinPlanet()) return;
+            joinPlanet();
+//            if(!joinPlanet()) return;
         }
         Main.debug("Searching for zone");
         ZoneController.currentZone = ZoneController.loadBestZone(currentPlanet);
@@ -157,7 +158,8 @@ public class Main {
                 ZoneController.clearSkipZones();
                 leaveCurrentPlanet();
                 currentPlanet=nextPlanet;
-                if(!joinPlanet()) return;
+                joinPlanet();
+//                if(!joinPlanet()) return;
             }
             ZoneController.currentZone = ZoneController.nextZone;
             if (ZoneController.currentZone == null) {
