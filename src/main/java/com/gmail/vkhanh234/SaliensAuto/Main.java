@@ -14,6 +14,7 @@ import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfo;
 import com.gmail.vkhanh234.SaliensAuto.data.PlayerInfo.PlayerInfoResponse;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScore;
 import com.gmail.vkhanh234.SaliensAuto.data.ReportScore.ReportScoreResponse;
+import com.gmail.vkhanh234.SaliensAuto.data.RequestResult;
 import com.gmail.vkhanh234.SaliensAuto.searchmode.SearchMode;
 import com.gmail.vkhanh234.SaliensAuto.searchmode.SearchModeManager;
 import com.gmail.vkhanh234.SaliensAuto.thread.CheckVersionThread;
@@ -199,7 +200,7 @@ public class Main {
     private static void progressBoss() {
         ZoneController.joinZone(ZoneController.currentZone,true);
         int attemp=0;
-        long healTime = randomNumber(26,30);
+        long healTime = randomNumber(26,28);
         while (true){
             if(attemp>=10) return;
             try {
@@ -211,29 +212,38 @@ public class Main {
             if(healTime--<=0){
                 heal=1;
 //                damageTaken=randomNumber(20,80);
-                healTime=randomNumber(26,34);
+                healTime=randomNumber(26,28);
             }
 
             ReportBossDamageResponse res = reportBossDamage(damage,heal,damageTaken);
-            if(res!=null && res.response!=null){
+            if(res==null){
+                debug("&cNo boss data found");
+                return;
+            }
+            if(res.eResult==11){
+                debug("&cYou probably died. Attempt restarting...");
+                instantRestart=true;
+                return;
+            }
+            if(res.response!=null){
                 ReportBossDamage response = res.response;
                 if(response.boss_status!=null) {
                     BossStatus status = response.boss_status;
                     if(status.boss_players!=null && status.boss_players.size()>0) {
                         for (BossPlayer player : status.boss_players){
                             if(Main.accountId>0 && player.accountid!=Main.accountId) continue;
-                            debug("Your HP: &e"+player.hp+"&r/&e"+player.max_hp+"&r - XP earned: &b"+player.xp_earned);
+                            debug("Your HP: &e"+TextUtils.formatNumber(player.hp)+"&r/&e"+TextUtils.formatNumber(player.max_hp)+"&r - XP earned: &b"+TextUtils.formatNumber(player.xp_earned));
                         }
                     }
                     if(status.game_over){
                         debug("&bBoss is done!");
-                        break;
+                        return;
                     }
                     if(status.waiting_for_players){
                         debug("&aWaiting for players...");
                         continue;
                     }
-                    debug("Boss HP: &e"+status.boss_hp+"&r/&e"+status.boss_max_hp);
+                    debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+status.num_laser_uses+"&r - Team heals: &e"+status.num_team_heals);
                 }
                 else{
                     debug("&aWaiting...");
@@ -244,12 +254,15 @@ public class Main {
     }
 
     private static ReportBossDamageResponse reportBossDamage(int damage, int heal, int damageTaken) {
-        String data = RequestUtils.post("ITerritoryControlMinigameService/ReportBossDamage","use_heal_ability="+heal+"&damage_to_boss="+damage
+        RequestResult result = RequestUtils.post("ITerritoryControlMinigameService/ReportBossDamage","use_heal_ability="+heal+"&damage_to_boss="+damage
                 +"&damage_taken="+damageTaken);
+        String data = result.data;
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportBossDamageResponse> jsonAdapter = moshi.adapter(ReportBossDamageResponse.class);
         try {
-            return jsonAdapter.fromJson(data);
+            ReportBossDamageResponse res = jsonAdapter.fromJson(data);
+            res.eResult=result.eResult;
+            return res;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -264,7 +277,7 @@ public class Main {
         int score = ZoneController.getZoneScore();
         debug("Finishing an instance >> Score: &e"+score
                 +"&r - Zone "+TextUtils.getZoneDetailsText(ZoneController.currentZone));
-        String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english");
+        String data = RequestUtils.post("ITerritoryControlMinigameService/ReportScore","score="+score+"&language=english").data;
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportScoreResponse> jsonAdapter = moshi.adapter(ReportScoreResponse.class);
         try {
@@ -326,7 +339,7 @@ public class Main {
     }
 
     public static PlayerInfo getPlayerInfo(){
-        String dat = RequestUtils.post("ITerritoryControlMinigameService/GetPlayerInfo","");
+        String dat = RequestUtils.post("ITerritoryControlMinigameService/GetPlayerInfo","").data;
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<PlayerInfoResponse> jsonAdapter = moshi.adapter(PlayerInfoResponse.class);
         try {
@@ -357,7 +370,7 @@ public class Main {
     }
 
     public static Planet getPlanetData(String id){
-        String data = RequestUtils.get("GetPlanet","id="+id);
+        String data = RequestUtils.get("GetPlanet","id="+id).data;
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<PlanetsResponse> jsonAdapter = moshi.adapter(PlanetsResponse.class);
         try {
@@ -371,7 +384,7 @@ public class Main {
     }
 
     public static Planets getPlanets(){
-        String res = RequestUtils.get( "GetPlanets", "active_only=1" );
+        String res = RequestUtils.get( "GetPlanets", "active_only=1" ).data;
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<PlanetsResponse> jsonAdapter = moshi.adapter(PlanetsResponse.class);
         try {

@@ -29,8 +29,8 @@ public class ZoneController {
     public static boolean joinZone(Zone zone, boolean boss) {
         Main.debug("Joining Zone "+TextUtils.getZoneDetailsText(zone.predict())+" - Planet &e"+Main.currentPlanet);
         String data;
-        if(boss) data = RequestUtils.post("ITerritoryControlMinigameService/JoinBossZone","zone_position="+zone.zone_position);
-        else data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+zone.zone_position);
+        if(boss) data = RequestUtils.post("ITerritoryControlMinigameService/JoinBossZone","zone_position="+zone.zone_position).data;
+        else data = RequestUtils.post("ITerritoryControlMinigameService/JoinZone","zone_position="+zone.zone_position).data;
         boolean result=false;
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ZoneInfoResponse> jsonAdapter = moshi.adapter(ZoneInfoResponse.class);

@@ -73,4 +73,9 @@ public class TextUtils {
                 +"&b - XP Required: &e"+format.format(Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score))
                 +"&r";
     }
+
+    public static String formatNumber(Object object){
+        NumberFormat format = NumberFormat.getInstance(Locale.US);
+        return format.format(object);
+    }
 }

@@ -1,6 +1,7 @@
 package com.gmail.vkhanh234.SaliensAuto.utils;
 
 import com.gmail.vkhanh234.SaliensAuto.Main;
+import com.gmail.vkhanh234.SaliensAuto.data.RequestResult;
 
 import javax.net.ssl.*;
 import java.io.BufferedReader;
@@ -14,29 +15,16 @@ import java.security.cert.CertificateException;
 
 
 public class RequestUtils {
-    public static String post(String type, String dat) {
+    public static RequestResult post(String type, String dat) {
         return sendRequest(type,dat,true);
     }
 
-    private static String getResponseMessage(int responseCode,Exception e) {
-        switch (responseCode){
-            case 401: return "Unauthorized. It could mean your token is incorrect.";
-            case 403: return "Forbidden";
-            case 500: return "Internal Server Error";
-            case 503: return "Service Unavailable. Most likely this means server goes down.  Let's wait a little while.";
-        }
-        return e.getLocalizedMessage();
-    }
-
-    public static String sendRequest(String type,String dat, boolean post){
+    public static RequestResult sendRequest(String type, String dat, boolean post){
         if(post && Main.token==null){
             Main.debug("&cError:&r Token hasn't been set yet");
             return null;
         }
-        int responseCode = -1;
-        int eresult = -1;
-        String errorMessage=null;
-        BufferedReader in=null;
+        RequestResult result = new RequestResult();
         HttpsURLConnection conn=null;
         try {
             trustAllHosts();
@@ -63,58 +51,35 @@ public class RequestUtils {
                 byte[] postData = dat.getBytes(StandardCharsets.UTF_8);
                 wr.write(postData);
             }
-            responseCode = conn.getResponseCode();
 
-            eresult = getEResult(conn);
-            errorMessage = getErrorMessage(conn);
-
-            in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder result = new StringBuilder();
-            String line;
-            while ((line = in.readLine()) != null) {
-                result.append(line);
-            }
-            return result.toString();
+            result.parseData(conn);
+            return result;
         } catch (IOException e) {
             Main.debug("&cError: &rCan't connect to Steam Server.");
-            Main.debug("\tResponse code: &e"+responseCode+" - &e"+getResponseMessage(responseCode,e));
+            if(result!=null && result.responseCode>=0) Main.debug("\tResponse code: &e"+result.responseCode+" - &e"+getResponseMessage(result.responseCode,e));
         }
         finally {
             if(conn!=null) conn.disconnect();
-            if(in!=null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                }
-            }
-            if(eresult>0){
-                if(eresult!=1){
-                    Main.debug("\tEResult: &c"+eresult+"&r"+(errorMessage!=null?(" - Error message: &c"+convertErrorMessage(eresult,errorMessage)):""));
+            if(result!=null && result.eResult>=0){
+                if(result.eResult!=1){
+                    Main.debug("\tEResult: &c"+result.eResult+"&r"+(result.errorMessage!=null?" - Error message: &c"+result.errorMessage:""));
                 }
             }
         }
         return null;
     }
 
-    private static String convertErrorMessage(int eresult, String errorMessage) {
-        if(eresult==17) return "Steam doesn't allow us to join this zone";
-        return errorMessage;
+    private static String getResponseMessage(int responseCode, Exception e) {
+        switch (responseCode){
+            case 401: return "Unauthorized. It could mean your token is incorrect.";
+            case 403: return "Forbidden";
+            case 500: return "Internal Server Error";
+            case 503: return "Service Unavailable. Most likely this means server goes down.  Let's wait a little while.";
+        }
+        return e.getLocalizedMessage();
     }
 
-    private static int getEResult(HttpsURLConnection conn) {
-        String s = conn.getHeaderField("x-eresult");
-        if(s==null) s = conn.getHeaderField("X-eresult");
-        if(s==null) return -1;
-        return Integer.valueOf(s);
-    }
-
-    private static String getErrorMessage(HttpsURLConnection conn) {
-        String s = conn.getHeaderField("x-error_message");
-        if(s==null) s = conn.getHeaderField("X-error_message");
-        return s;
-    }
-
-    public static String get(String type, String dat) {
+    public static RequestResult get(String type, String dat) {
         return sendRequest(type,dat,false);
     }
 
