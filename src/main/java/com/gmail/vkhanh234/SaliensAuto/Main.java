@@ -162,6 +162,7 @@ public class Main {
             }
             if(ZoneController.currentZone.boss_active){
                 progressBoss();
+                return;
             }
             else {
                 if (!ZoneController.joinZone(ZoneController.currentZone)) {
@@ -198,14 +199,12 @@ public class Main {
     private static void progressBoss() {
         ZoneController.joinZone(ZoneController.currentZone,true);
         int attemp=0;
-        long healTime = randomNumber(26,34);
+        long healTime = randomNumber(26,30);
         while (true){
             if(attemp>=10) return;
             try {
                 Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            } catch (InterruptedException e) {}
             int damage = 1;
             int damageTaken = 0;
             int heal=0;
@@ -223,7 +222,7 @@ public class Main {
                     if(status.boss_players!=null && status.boss_players.size()>0) {
                         for (BossPlayer player : status.boss_players){
                             if(Main.accountId>0 && player.accountid!=Main.accountId) continue;
-                            debug("Player HP: &e"+player.hp+"&r/&e"+player.max_hp+"&r - XP earned: &b"+player.xp_earned);
+                            debug("Your HP: &e"+player.hp+"&r/&e"+player.max_hp+"&r - XP earned: &b"+player.xp_earned);
                         }
                     }
                     if(status.game_over){
