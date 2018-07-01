@@ -55,7 +55,7 @@ public class RequestUtils {
             result.parseData(conn);
             return result;
         } catch (IOException e) {
-            Main.debug("&cError: &rCan't connect to Steam Server.");
+            Main.debug("&cError: &rCouldn't connect to Steam Server.");
             if(result!=null && result.responseCode>=0) Main.debug("\tResponse code: &e"+result.responseCode+" - &e"+getResponseMessage(result.responseCode,e));
         }
         finally {

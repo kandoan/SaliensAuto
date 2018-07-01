@@ -244,7 +244,8 @@ public class Main {
                                 break;
                             }
                             if(main!=null) {
-                                debug("Your HP: &e" + TextUtils.formatNumber(main.hp) + "&r/&e" + TextUtils.formatNumber(main.max_hp) + "&r - XP earned: &b" + TextUtils.formatNumber(main.xp_earned));
+                                debug("Your HP: &e" + TextUtils.formatNumber(main.hp) + "&r/&e" + TextUtils.formatNumber(main.max_hp) + "&r - XP earned: &b"
+                                        + TextUtils.formatNumber(main.xp_earned)+"&r - Your teammates: &e"+status.boss_players.size());
                                 if(main.hp<=0){
                                     debug("\t&bNo HP left. Attempt to restart...");
                                     return;
@@ -354,7 +355,7 @@ public class Main {
                 debug(highlight("Left game " + highlight(info.active_zone_game), Color.AQUA));
                 return true;
             }
-            else debug("&eError:&r Can't leave zone");
+            else debug("&eError:&r Couldn't leave zone");
         }
         if(info.active_planet!=null) currentPlanet = info.active_planet;
         return false;
@@ -369,7 +370,7 @@ public class Main {
                 debug(highlight("Left planet " + highlight(info.active_planet), Color.AQUA));
                 return true;
             }
-            else debug("&eError:&r Can't leave planet");
+            else debug("&eError:&r Couldn't leave planet");
         }
         return false;
     }
