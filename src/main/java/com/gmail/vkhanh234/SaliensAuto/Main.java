@@ -320,8 +320,10 @@ public class Main {
                 ReportScore response = res.response;
                 if(response==null || response.new_score==null) return false;
                 debug("&bFinished. Your progress >> "+TextUtils.getPlayerProgress(response));
-                int scoreLeft = Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score);
-                debug("\t&bApprox time left to reach Level &e"+(response.new_level+1)+"&b: &d"+ProgressUtils.getTimeLeft(scoreLeft,ZoneController.getPointPerSec(ZoneController.currentZone.difficulty)));
+                if(response.new_level<25) {
+                    int scoreLeft = Integer.valueOf(response.next_level_score) - Integer.valueOf(response.new_score);
+                    debug("\t&bApprox time left to reach Level &e" + (response.new_level + 1) + "&b: &d" + ProgressUtils.getTimeLeft(scoreLeft, ZoneController.getPointPerSec(ZoneController.currentZone.difficulty)));
+                }
                 return true;
             }
         } catch (IOException e) {

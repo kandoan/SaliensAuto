@@ -67,11 +67,14 @@ public class TextUtils {
 
     public static String getPlayerProgress(ReportScore response) {
         NumberFormat format = NumberFormat.getInstance(Locale.US);
-        return "Level: &e"+response.new_level
-                +"&b - XP: &r(&e"+format.format(Integer.valueOf(response.new_score))+"&r/&e"+format.format(Integer.valueOf(response.next_level_score))+"&r)"
-                +"&b - XP Percent: &a"+ProgressUtils.getPercent(Integer.valueOf(response.new_score),Integer.valueOf(response.next_level_score))+"%"
-                +"&b - XP Required: &e"+format.format(Integer.valueOf(response.next_level_score)-Integer.valueOf(response.new_score))
-                +"&r";
+        String s = "Level: &e"+response.new_level
+                +"&b - XP: &r(&e"+format.format(Integer.valueOf(response.new_score))+"&r/&e"+format.format(Integer.valueOf(response.next_level_score))+"&r)";
+        if(response.new_level<25) {
+            s=s+"&b - XP Percent: &a" + ProgressUtils.getPercent(Integer.valueOf(response.new_score), Integer.valueOf(response.next_level_score)) + "%"
+                    + "&b - XP Required: &e" + format.format(Integer.valueOf(response.next_level_score) - Integer.valueOf(response.new_score))
+                    + "&r";
+        }
+        return s;
     }
 
     public static String formatNumber(Object object){
