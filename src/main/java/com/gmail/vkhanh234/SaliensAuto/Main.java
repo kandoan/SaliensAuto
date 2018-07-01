@@ -160,7 +160,6 @@ public class Main {
                 if(!joinPlanet()) return;
             }
             ZoneController.currentZone = ZoneController.nextZone;
-//            ZoneController.currentZone.capture_progress+=ZoneController.getAverageProgress();
             if (ZoneController.currentZone == null) {
                 debug(highlight("No zone found",Color.RED));
                 return;
@@ -262,6 +261,7 @@ public class Main {
                     debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+response.num_laser_uses+"&r - Team heals: &e"+response.num_team_heals);
                     if(status.boss_max_hp<=0){
                         debug("&eBoss died");
+                        return;
                     }
                 }
                 else{
