@@ -217,7 +217,7 @@ public class Main {
                 damage=0;
                 waitingPlayers=false;
             }
-            else damage = randomNumber(100,250);
+            else damage = 1;
 
             int damageTaken = 0;
             int heal=0;
