@@ -203,7 +203,7 @@ public class Main {
 
     private static int progressBoss() {
         ZoneController.joinZone(ZoneController.currentZone,true);
-        int attemp=0,sumXP=0;
+        int attemp=0,lastXP=-1,sumXP=0;
         long healTime = randomNumber(26,28);
         boolean waitingPlayers=false;
         while (true){
@@ -250,7 +250,10 @@ public class Main {
                                 break;
                             }
                             if(main!=null) {
-                                sumXP=main.xp_earned;
+
+                                if(lastXP>=0) sumXP+=main.xp_earned-lastXP;
+                                lastXP=main.xp_earned;
+
                                 debug("Your HP: &e" + TextUtils.formatNumber(main.hp) + "&r/&e" + TextUtils.formatNumber(main.max_hp) + "&r - XP earned: &b"
                                         + TextUtils.formatNumber(main.xp_earned)+"&r - Your teammates: &e"+status.boss_players.size());
                                 if(main.hp<=0){
