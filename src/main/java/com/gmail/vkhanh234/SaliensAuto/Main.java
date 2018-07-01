@@ -50,8 +50,6 @@ public class Main {
 
     public static boolean pause=true;
     public static boolean instantRestart=false;
-    public static int vcCounter=5;
-    public static int noHighCounter=0;
     public static int maxDiff=0;
     public static int[] totalDiff = new int[5];
 
@@ -65,6 +63,7 @@ public class Main {
 
     public static boolean disableUpdate = false;
 
+    public static int sumBossXp=0;
 
     public static void main(String[] args){
         AnsiConsole.systemInstall();
@@ -147,7 +146,6 @@ public class Main {
             ZoneController.clearSkipZones();
             currentPlanet=nextPlanet;
             joinPlanet();
-//            if(!joinPlanet()) return;
         }
         Main.debug("Searching for zone");
         ZoneController.currentZone = ZoneController.loadBestZone(currentPlanet);
@@ -159,7 +157,6 @@ public class Main {
                 leaveCurrentPlanet();
                 currentPlanet=nextPlanet;
                 joinPlanet();
-//                if(!joinPlanet()) return;
             }
             ZoneController.currentZone = ZoneController.nextZone;
             if (ZoneController.currentZone == null) {
@@ -167,11 +164,17 @@ public class Main {
                 return;
             }
             if(ZoneController.currentZone.boss_active){
-                progressBoss();
+                int xp=progressBoss();
+                if(accountId>0) {
+                    sumBossXp+=xp;
+                    debug("\tYou gained &e" + TextUtils.formatNumber(xp) + "&r in this fight");
+                    debug("\tYou gained totally &e" + TextUtils.formatNumber(sumBossXp) + "&r with this boss");
+                }
                 instantRestart=true;
                 return;
             }
             else {
+                sumBossXp=0;
                 if (!ZoneController.joinZone(ZoneController.currentZone)) {
                     debug(highlight("Failed to join zone " + highlight(ZoneController.currentZone.getZoneText() + ""), Color.RED));
                     return;
@@ -203,13 +206,13 @@ public class Main {
         }
     }
 
-    private static void progressBoss() {
+    private static int progressBoss() {
         ZoneController.joinZone(ZoneController.currentZone,true);
-        int attemp=0;
+        int attemp=0,sumXP=0;
         long healTime = randomNumber(26,28);
         boolean waitingPlayers=false;
         while (true){
-            if(attemp>=10) return;
+            if(attemp>=10) break;
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {}
@@ -233,11 +236,11 @@ public class Main {
             ReportBossDamageResponse res = reportBossDamage(damage,heal,damageTaken);
             if(res==null){
                 debug("&cNo boss data found");
-                return;
+                break;
             }
             if(res.eResult==11){
                 debug("&cYou probably died. Attempt to restart...");
-                return;
+                break;
             }
             if(res.response!=null){
                 ReportBossDamage response = res.response;
@@ -252,18 +255,19 @@ public class Main {
                                 break;
                             }
                             if(main!=null) {
+                                sumXP=main.xp_earned;
                                 debug("Your HP: &e" + TextUtils.formatNumber(main.hp) + "&r/&e" + TextUtils.formatNumber(main.max_hp) + "&r - XP earned: &b"
                                         + TextUtils.formatNumber(main.xp_earned)+"&r - Your teammates: &e"+status.boss_players.size());
                                 if(main.hp<=0){
                                     debug("\t&bNo HP left. Attempt to restart...");
-                                    return;
+                                    break;
                                 }
                             }
                         }
                     }
                     if(status.game_over){
                         debug("&bBoss is done!");
-                        return;
+                        break;
                     }
                     if(status.waiting_for_players){
                         debug("&aWaiting for players...");
@@ -273,7 +277,7 @@ public class Main {
                     debug("Boss HP: &e"+TextUtils.formatNumber(status.boss_hp)+"&r/&e"+TextUtils.formatNumber(status.boss_max_hp)+"&r - Laser used: &e"+response.num_laser_uses+"&r - Team heals: &e"+response.num_team_heals);
                     if(status.boss_hp<=0){
                         debug("&eBoss died");
-                        return;
+                        break;
                     }
                 }
                 else{
@@ -282,6 +286,7 @@ public class Main {
                 }
             }
         }
+        return sumXP;
     }
 
     private static ReportBossDamageResponse reportBossDamage(int damage, int heal, int damageTaken) {
@@ -491,15 +496,6 @@ public class Main {
     }
 
     public static void checkVersion(){
-//        if(disableUpdate) return;
-//        //Only check every 5 zones
-//        if(vcCounter<5){
-//            vcCounter++;
-//            return;
-//        }
-//        vcCounter=0;
-//
-//        if(versionThread!=null && !versionThread.isInterrupted()) versionThread.interrupt();
         versionThread = new CheckVersionThread();
         versionThread.start();
     }
