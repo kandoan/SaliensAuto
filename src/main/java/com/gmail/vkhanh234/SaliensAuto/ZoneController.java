@@ -41,11 +41,11 @@ public class ZoneController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(!result) {
-            skipZones.add(zone.zone_position);
-            Main.debug("\tSkip zone &e"+zone.zone_position+"&r from now on until switching to other planet.");
-            Main.debug("\t&bPlease wait for the program to restart itself and everything will work again.");
-        }
+//        if(!result) {
+//            skipZones.add(zone.zone_position);
+//            Main.debug("\tSkip zone &e"+zone.zone_position+"&r from now on until switching to other planet.");
+//            Main.debug("\t&bPlease wait for the program to restart itself and everything will work again.");
+//        }
         return result;
     }
     public static boolean joinZone(Zone zone) {
