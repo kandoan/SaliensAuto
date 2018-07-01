@@ -290,6 +290,7 @@ public class Main {
     private static ReportBossDamageResponse reportBossDamage(int damage, int heal, int damageTaken) {
         RequestResult result = RequestUtils.post("ITerritoryControlMinigameService/ReportBossDamage","use_heal_ability="+heal+"&damage_to_boss="+damage
                 +"&damage_taken="+damageTaken);
+        if(result.data==null) return null;
         String data = result.data;
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<ReportBossDamageResponse> jsonAdapter = moshi.adapter(ReportBossDamageResponse.class);
