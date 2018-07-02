@@ -6,7 +6,7 @@
 
     <groupId>com.gmail.vkhanh234</groupId>
     <artifactId>SaliensAuto</artifactId>
-    <version>1.4.10</version>
+    <version>1.4.11</version>
     <packaging>jar</packaging>
     <build>
         <finalName>SaliensAuto</finalName>
