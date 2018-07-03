@@ -26,7 +26,7 @@ public class SearchThread extends Thread {
                 Main.debug("Searching for next zone while waiting");
                 ZoneController.nextZone = ZoneController.loadBestZone(Main.nextPlanet);
                 if(ZoneController.nextZone!=null) {
-                    Main.debug("Next zone is Zone " + TextUtils.getZoneDetailsText(ZoneController.nextZone));
+                    Main.debug("Next zone is Zone " + TextUtils.getZoneDetailsText(ZoneController.nextZone)+" - Planet: &e"+Main.nextPlanet);
                     if(ZoneController.nextZone.boss_active){
                         Main.debug("&cBOSS ALERT!! RESTARTING TO FIGHT BOSS...");
                         Main.startProcessThread();

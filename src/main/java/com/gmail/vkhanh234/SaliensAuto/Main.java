@@ -93,6 +93,9 @@ public class Main {
     public static void setPlanetSearchMode(int v) {
         planetSearchMode = v;
         debug(highlight("Planet Search Mode")+" has been set to "+highlight(planetSearchMode+""));
+        if(!pause){
+            searchWhileWaiting();
+        }
     }
 
     public static void setToken(String s) {
