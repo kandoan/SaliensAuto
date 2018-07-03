@@ -36,7 +36,7 @@ import java.util.Scanner;
 
 
 public class Main {
-    public static final double MAX_CAPTURE_RATE = 0.95;
+    public static final double MAX_CAPTURE_RATE = 0.97;
 
     public  static String token;
     public static String currentPlanet;

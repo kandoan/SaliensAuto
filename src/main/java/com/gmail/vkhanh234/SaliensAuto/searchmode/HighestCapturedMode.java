@@ -10,7 +10,7 @@ public class HighestCapturedMode extends SearchMode {
         String result = null;
         double max = 0;
         for(Planet planet:planets.planets){
-            if(planet.state==null || !planet.state.active || planet.state.captured) continue;
+            if(planet.state==null || !planet.state.active || planet.state.captured || planet.state.capture_progress>= Main.MAX_CAPTURE_RATE) continue;
             if(!Main.stealthSearch) Main.debug("> Planet "+TextUtils.getPlanetsDetailsText(planet));
             if(max<planet.state.capture_progress){
                 max = planet.state.capture_progress;

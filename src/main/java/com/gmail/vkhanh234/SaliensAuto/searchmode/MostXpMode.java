@@ -13,6 +13,7 @@ public class MostXpMode extends SearchMode {
         int[] max = new int[5];
         String result=null;
         for(Planet planet:planets.planets){
+            if(planet.state==null || !planet.state.active || planet.state.captured || planet.state.capture_progress>= Main.MAX_CAPTURE_RATE) continue;
             Planet planetData = Main.getPlanetData(planet.id);
             int[] difficuties = ZoneController.getDifficulties(planetData);
             if(!Main.stealthSearch) {
